@@ -9,7 +9,6 @@ module.exports = {
         const crazyFunc = () => {
             return Math.floor((new Date() - 1615936548328) / (7 * 24 * 60 * 60 * 1000)) - 127;
         }
-        console.log(crazyFunc())
 
         const daveEmbed = new EmbedBuilder()
             .setTitle(`⏱ ~${crazyFunc()} Weeks~ ⏱`)

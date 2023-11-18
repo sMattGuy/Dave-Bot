@@ -12,9 +12,12 @@ const updateJerk = async (user) => {
         await addUser(user);
     }
 
+    if (userSnap.data().stats.dailyJerks > 5) return 'Excessive Jerkin!';
+
     await updateDoc(userRef, {
         'stats.dailyJerks': increment(1)
     })
+
     return await getUser(user);
 }
 

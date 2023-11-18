@@ -1,0 +1,16 @@
+const { EmbedBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder } = require('discord.js');
+
+module.exports = {
+	data: new SlashCommandBuilder()
+		.setName('setdotd')
+		.setDescription("💬 Wut's the big message of the day David? 💬"),
+	async execute(interaction) {
+        const newDotd = 'test';
+
+        const newDotdEmbed = new EmbedBuilder()
+            .setTitle(`${newDotd}`)
+
+		let msg = await interaction.reply({ embeds: [newDotdEmbed], ephemeral: true });
+	},
+};

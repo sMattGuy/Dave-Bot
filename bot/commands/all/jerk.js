@@ -9,10 +9,15 @@ module.exports = {
 	async execute(interaction) {
         const user = interaction.user;
         const userData = await updateJerk(user);
+        if (userData === 'no user') {
+            const noUserEmbed = new EmbedBuilder()
+                .setTitle(`Try /jerkme first!`)
+
+            return await interaction.reply({ embeds: [noUserEmbed], ephemeral: true });
+        }
         if (userData === 'Excessive Jerkin!') {
             const nomoJerkEmbed = new EmbedBuilder()
-                .setTitle(`🤢 EXCESSIVE JERK ALERT 🤢`)
-                .setDescription('lying ahh')
+                .setTitle(`🤢 Excessive Jerkin! (Your tapped out dawg) 🤢`)
 
             return await interaction.reply({ embeds: [nomoJerkEmbed]});
         }
@@ -22,13 +27,17 @@ module.exports = {
             "I bet you're not lonely!",
             "That's a start!",
             'Beats walkin!',
-            'Gyatt!'
+            'Gyatt!',
+            'Better me than you.',
+            'Tis better to sink in the cum, than to cum in the sink.',
+            'Baby killer.'
         ]
 
-        const jerkAmt = userData.stats.dailyJerks;
+        const jerkAmt = userData.stats.jerks;
 
         const jerkEmbed = new EmbedBuilder()
-            .setTitle(`🤢 You jerked ${jerkAmt} times today! ${jerkTextOptions[Math.floor(Math.random() * 5)]}`)
+            .setTitle(`🤢 You jerked ${jerkAmt} times today! ${jerkTextOptions[Math.floor(Math.random() * jerkTextOptions.length)]}`)
+            .setDescription(`You extracted ${userData.stats.preNut} nut. Nice!`)
 
 		let msg = await interaction.reply({ embeds: [jerkEmbed] });
 	},

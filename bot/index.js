@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
+const updateJerkStores = require('../backend/firestore/timers/update_jerk_stores');
 require('dotenv').config();
 
 const token = process.env.TOKEN;
@@ -38,4 +39,5 @@ for (const file of eventFiles) {
 	}
 }
 
+updateJerkStores();
 client.login(token);

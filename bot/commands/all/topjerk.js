@@ -21,7 +21,7 @@ module.exports = {
 
 		let counter = 1;
 		Object.keys(usersData).forEach((id) => {
-			meaterBoard += `${counter}. ${usersData[id].username} ${meatMaker(usersData[id].stats.dailyJerks)}\n`;
+			meaterBoard += `${counter}. ${usersData[id].username} ${meatMaker(usersData[id].stats.jerks)}\n`;
 			counter++;
 		})
 

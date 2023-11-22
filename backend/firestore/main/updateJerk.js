@@ -5,18 +5,24 @@ const getUser = require("./getUser");
 
 const updateJerk = async (user) => {
     const userRef = doc(db, 'users', user.id);
-    const userSnap = await getDoc(userRef);
+    let userSnap = await getDoc(userRef);
 
     const exists = userSnap.exists();
     if(!exists) {
         await addUser(user);
+        userSnap = await getDoc(userRef);
+
+        return 'no user';
     }
 
-    if (userSnap.data().stats.dailyJerks > 5) return 'Excessive Jerkin!';
+    if (userSnap.data().stats.jerks === userSnap.data().stats.maxJerks) return 'max jerks';
 
     await updateDoc(userRef, {
-        'stats.dailyJerks': increment(1)
-    })
+        'stats.jerks': increment(1),
+        'stats.nut': increment(userSnap.data().stats.jerkStores),
+        'stats.jerkStores': 0,
+        'stats.preNut': userSnap.data().stats.jerkStores
+    });
 
     return await getUser(user);
 }

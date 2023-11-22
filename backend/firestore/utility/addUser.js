@@ -11,11 +11,23 @@ const addUser = async (user) => {
         username: user.username,
         admin: false,
         stats: {
-            averageJerks: 0,
-            totalJerks: 0,
-            dailyJerks: 0 
+            jerks: 0,
+            nutBricks: 0,
+            nut: 0,
+            maxJerks: 5,
+            jerkStores: 200,
+            leftFootStores: 0,
+            rightFootStores: 0,
+            preNut: 0
+        },
+        items: {
+            backpack: [],
+            upgrades: []
+        },
+        timer: {
+
         }
-    })
-}
+    });
+};
 
 module.exports = addUser;

@@ -9,10 +9,13 @@ module.exports = {
         const helpEmbed = new EmbedBuilder()
             .setTitle('Dave Help')
             .addFields(
-                { name: '/dave' },
-                { name: '/rateDave' },
-                { name: '/jerk' },
-                { name: '/topJerk' }
+                { name: '~DAVE COMMANDS~', value: 'All things Dave are below.' },
+                { name: '/dave', value: 'See Daves time with us. (his days are numbered)' },
+                { name: '/rateDave', value: 'Rate ya boy dave.' },
+                { name: '~JERK COMMANDS~', value: 'All things jerk are below.' },
+                { name: '/jerk', value: 'Stroke that shii.' },
+                { name: '/topJerk', value: 'Who been strokin the mostin?' },
+                { name: '/jerkme', value: 'Check your stuff.' },
             )
 
 		let msg = await interaction.reply({ embeds: [helpEmbed] });

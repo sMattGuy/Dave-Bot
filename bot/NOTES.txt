@@ -8,3 +8,7 @@ jelk (increase generation speed, yes there will be jelk levels)
 sniper game
 
 /smoke
+
+/jizz {@name} - sends nut to someone
+
+blue balls if no jerk in a while

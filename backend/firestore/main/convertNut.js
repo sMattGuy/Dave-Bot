@@ -7,11 +7,13 @@ const convertNut = async (user) => {
     const userData = userSnap.data();
 
     let totalNut = userData.stats.nut;
-    const nutBlocks = Math.floor(totalNut / 1000);
-    totalNut = totalNut - (nutBlocks * 1000);
+    const nutBricks = Math.floor(totalNut / 1000);
+    totalNut = totalNut - (nutBricks * 1000);
 
     await updateDoc(userRef, {
         'stats.nut': totalNut,
-        'stats.nutBlocks': nutBlocks
+        'stats.nutBricks': nutBricks + userData.stats.nutBricks
     });
 };
+
+module.exports = convertNut;

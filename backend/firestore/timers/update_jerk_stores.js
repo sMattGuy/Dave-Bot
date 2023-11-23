@@ -1,10 +1,14 @@
 const { writeBatch, doc, increment } = require("firebase/firestore");
 const { db } = require("../../db");
 const getUsers = require("../main/getUsers");
+const getTimers = require("../utility/getTimers");
 
 const updateJerkStores = async () => {
+    const timersData = await getTimers();
     const jerkMult = 1.03;
     const baseJerkAmt = 3;
+
+    const tick = timersData.jerkTick;
 
     setInterval(async () => {
         console.log(`update jerk stores`);
@@ -42,7 +46,7 @@ const updateJerkStores = async () => {
         } catch (err) {
             console.log(err);
         }
-    }, 180000);
+    }, (tick * 60000));
 }
 
 module.exports = updateJerkStores;

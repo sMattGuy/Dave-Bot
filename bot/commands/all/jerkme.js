@@ -1,9 +1,10 @@
 const { EmbedBuilder } = require('@discordjs/builders');
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const getUsers = require('../../../backend/firestore/main/getUsers');
 const getUser = require('../../../backend/firestore/main/getUser');
 const invCondenser = require('../../helper/inv_condenser');
 const getItems = require('../../../backend/firestore/utility/get_items');
+const convertNut = require('../../../backend/firestore/main/convertNut');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -11,7 +12,7 @@ module.exports = {
 		.setDescription("🧑 Check the stat sheet! 😊"),
 	async execute(interaction) {
         const user = interaction.user;
-		const userData = await getUser(user);
+		let userData = await getUser(user);
         const itemsData = await getItems();
         //console.log(itemsData);
 
@@ -39,8 +40,63 @@ module.exports = {
                 { name: 'Balls', value: `💧 ${userData.stats.jerkStores}/200`, inline: true },
                 { name: 'Daily Jerks Remaining', value: `${userData.stats.maxJerks - userData.stats.jerks}/${userData.stats.maxJerks}`},
                 { name: 'Backpack', value: `${backpackText}`}
-            )
+            );
 
-		let msg = await interaction.reply({ embeds: [statsEmbed], ephemeral: true });
+        const convertNutButton = new ButtonBuilder()
+            .setCustomId("convert")
+            .setLabel("💦 Convert Nut 🧱")
+            .setStyle(ButtonStyle.Primary);
+
+        if (userData.stats.nut < 1000) convertNutButton.setDisabled(true);
+
+        const row1 = new ActionRowBuilder().addComponents(
+            convertNutButton
+        );
+
+		let msg = await interaction.reply({
+            embeds: [statsEmbed],
+            components: [row1],
+            ephemeral: true
+        });
+
+        const buttonFilter = (i) => {
+            return i.user.id = user.id;
+        }
+
+        const buttonCollector = msg.createMessageComponentCollector({
+            filter: buttonFilter,
+            time: 8000
+        });
+
+        buttonCollector.on('collect', async i => {
+            const choice = i.customId;
+            if (choice === 'convert') {
+                await convertNut(user);
+                convertNutButton.setDisabled(true);
+                userData = await getUser(user);
+                const newStatsEmbed = new EmbedBuilder()
+                .setTitle('🥩 My Stuff 🧱')
+                .setDescription(`${statsDesc}`)
+                .addFields(
+                    { name: 'Nut Bricks', value: `🧱  ${userData.stats.nutBricks}`, inline: true },
+                    { name: 'Nut', value: `💦  ${userData.stats.nut}`, inline: true },
+                    { name: 'Balls', value: `💧  ${userData.stats.jerkStores}/200`, inline: true },
+                    { name: 'Daily Jerks Remaining', value: `${userData.stats.maxJerks - userData.stats.jerks}/${userData.stats.maxJerks}`},
+                    { name: 'Backpack', value: `${backpackText}`}
+                );
+
+                await i.update({
+                    embeds: [newStatsEmbed],
+                    components: [row1],
+                    ephemeral: true
+                });
+                buttonCollector.stop('Button Clicked');
+            }
+        });
+
+        buttonCollector.on('end', async (collected, reason) => {
+
+        });
+
 	},
 };

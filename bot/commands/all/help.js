@@ -12,9 +12,11 @@ module.exports = {
                 { name: '~DAVE COMMANDS~', value: 'All things Dave are below.' },
                 { name: '/dave', value: 'See Daves time with us. (his days are numbered)' },
                 { name: '/rateDave', value: 'Rate ya boy dave.' },
+                { name: '/dotd', value: "Dave's message of the day." },
+                { name: '/setdotd', value: "Dave can set his message of the day." },
                 { name: '~JERK COMMANDS~', value: 'All things jerk are below.' },
                 { name: '/jerk', value: 'Stroke that shii.' },
-                { name: '/topJerk', value: 'Who been strokin the mostin?' },
+                { name: '/topjerk', value: 'Who been strokin the mostin?' },
                 { name: '/jerkme', value: 'Check your stuff.' },
             )
 

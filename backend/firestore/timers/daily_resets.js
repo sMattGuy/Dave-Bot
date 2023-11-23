@@ -4,11 +4,17 @@ const { db } = require("../../db");
 const getUsers = require("../main/getUsers");
 
 const dailyResets = async () => {
+    // manual DATE reset
+    /*const timersRef = doc(db, 'assets', 'timers');
+    await updateDoc(timersRef, {
+        'date': new Date()
+    })*/
+
     const checkToday = (date) => {
         const today = new Date();
-        console.log(today);
+        const checkDay = date.toDate();
 
-        if (today.toDateString() === date.toDateString()) return true;
+        if (today.toDateString() === checkDay.toDateString()) return true;
         return false;
     }
 
@@ -28,7 +34,7 @@ const dailyResets = async () => {
     }
     
     setInterval(async () => {
-        const timersData = getTimers();
+        const timersData = await getTimers();
         const timersRef = doc(db, 'assets', 'timers');
 
         if (!checkToday(timersData.date)) {
@@ -37,7 +43,7 @@ const dailyResets = async () => {
             });
             await reset();
         }
-    }, 60000);
+    }, 6000);
 }
 
 module.exports = dailyResets;

@@ -43,7 +43,7 @@ const dailyResets = async () => {
             });
             await reset();
         }
-    }, 6000);
+    }, 30000);
 }
 
 module.exports = dailyResets;

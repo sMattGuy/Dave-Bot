@@ -42,7 +42,7 @@ for (const file of eventFiles) {
 	}
 }
 
-toptimer();
+//toptimer();
 dailyResets();
 updateJerkStores();
 client.login(token);

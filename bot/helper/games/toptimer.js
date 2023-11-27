@@ -105,7 +105,7 @@ const playTopTimer = async (interaction) => {
         
             topBetCollector.on('collect', async i => {
                 currBet = Math.floor(parseInt(i.content));
-                gameEmbed.setDescription(`Confirm your bet: 💦 ${currBet}`);
+                gameEmbed.setDescription(`Confirm Bet: 💦 ${currBet}`);
                 msg = await interaction.editReply({
                     embeds: [gameEmbed],
                     components: [row1]

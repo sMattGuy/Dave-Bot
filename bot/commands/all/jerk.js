@@ -15,9 +15,9 @@ module.exports = {
 
             return await interaction.reply({ embeds: [noUserEmbed], ephemeral: true });
         }
-        if (userData === 'Excessive Jerkin!') {
+        if (userData === 'max jerks') {
             const nomoJerkEmbed = new EmbedBuilder()
-                .setTitle(`🤢 Excessive Jerkin! (Your tapped out dawg) 🤢`)
+                .setTitle(`🤢 Excessive Jerkin! (You tapped out dawg) 🤢`)
 
             return await interaction.reply({ embeds: [nomoJerkEmbed]});
         }

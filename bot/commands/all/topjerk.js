@@ -27,7 +27,7 @@ module.exports = {
 
         const meatLeaderboardEmbed = new EmbedBuilder()
             .setTitle('🔨 Meaterboard 🥩')
-			.setDescription(`${meaterBoard}`);
+			.setDescription(`${meaterBoard ? meaterBoard : 'NOONE JERKIN??'}`);
 
 		let msg = await interaction.reply({ embeds: [meatLeaderboardEmbed] });
 	},

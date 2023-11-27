@@ -44,7 +44,7 @@ module.exports = {
 
         const convertNutButton = new ButtonBuilder()
             .setCustomId("convert")
-            .setLabel("💦 Convert Nut 🧱")
+            .setLabel("💦 Smelt Nut 🧱")
             .setStyle(ButtonStyle.Primary);
 
         if (userData.stats.nut < 1000) convertNutButton.setDisabled(true);
@@ -65,7 +65,7 @@ module.exports = {
 
         const buttonCollector = msg.createMessageComponentCollector({
             filter: buttonFilter,
-            time: 8000
+            time: 10000
         });
 
         buttonCollector.on('collect', async i => {
@@ -75,27 +75,27 @@ module.exports = {
                 convertNutButton.setDisabled(true);
                 userData = await getUser(user);
                 const newStatsEmbed = new EmbedBuilder()
-                .setTitle('🥩 My Stuff 🧱')
-                .setDescription(`${statsDesc}`)
-                .addFields(
-                    { name: 'Nut Bricks', value: `🧱  ${userData.stats.nutBricks}`, inline: true },
-                    { name: 'Nut', value: `💦  ${userData.stats.nut}`, inline: true },
-                    { name: 'Balls', value: `💧  ${userData.stats.jerkStores}/200`, inline: true },
-                    { name: 'Daily Jerks Remaining', value: `${userData.stats.maxJerks - userData.stats.jerks}/${userData.stats.maxJerks}`},
-                    { name: 'Backpack', value: `${backpackText}`}
-                );
+                    .setTitle('🥩 My Stuff 🧱')
+                    .setDescription(`${statsDesc}`)
+                    .addFields(
+                        { name: 'Nut Bricks', value: `🧱  ${userData.stats.nutBricks}`, inline: true },
+                        { name: 'Nut', value: `💦  ${userData.stats.nut}`, inline: true },
+                        { name: 'Balls', value: `💧  ${userData.stats.jerkStores}/200`, inline: true },
+                        { name: 'Daily Jerks Remaining', value: `${userData.stats.maxJerks - userData.stats.jerks}/${userData.stats.maxJerks}`},
+                        { name: 'Backpack', value: `${backpackText}`}
+                    );
 
                 await i.update({
                     embeds: [newStatsEmbed],
-                    components: [row1],
-                    ephemeral: true
+                    components: [row1]
                 });
                 buttonCollector.stop('Button Clicked');
             }
         });
 
         buttonCollector.on('end', async (collected, reason) => {
-
+            /*if (reason !== 'Button Clicked') {
+            }*/
         });
 
 	},

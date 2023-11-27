@@ -3,9 +3,11 @@ const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const updateJerkStores = require('../backend/firestore/timers/update_jerk_stores');
 const dailyResets = require('../backend/firestore/timers/daily_resets');
+const { toptimer } = require('./helper/games/toptimer');
+
 require('dotenv').config();
 
-const token = process.env.TOKEN;
+let token = process.env.TOKEN;
 
 const client = new Client({intents:[GatewayIntentBits.GuildMessages, GatewayIntentBits.Guilds, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageReactions]});
 
@@ -40,6 +42,7 @@ for (const file of eventFiles) {
 	}
 }
 
+toptimer();
 dailyResets();
 updateJerkStores();
 client.login(token);

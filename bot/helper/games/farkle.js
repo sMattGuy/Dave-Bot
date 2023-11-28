@@ -7,9 +7,10 @@ const playJizzle = async (interaction) => {
   let currBet = 0;
 
   const jizzleEmbed = new EmbedBuilder().setTitle(
-    `🎲 Jizzle! 💦\nBet: Send your nut bet below!`
+    `🎲 Jizzle! 💦`
   )
-  .setImage('attachment://farkleTable.png')
+  .setDescription(`Bet: Send your nut bet below!`)
+  //.setImage('attachment://farkleTable.png')
 
   const newGameButton = new ButtonBuilder()
     .setCustomId("newGame")
@@ -58,9 +59,13 @@ const playJizzle = async (interaction) => {
   jizzleBetCollector.on("collect", async (i) => {
     currBet = Math.floor(parseInt(i.content));
     const jizzleEmbed = new EmbedBuilder().setTitle(
-        `🎲 Jizzle! 💦\nBet: ${currBet} 💦`
+        `🎲 Jizzle! 💦`
       )
-      .setImage('attachment://farkleTable.png')
+      .setDescription(`Bet: ${currBet} 💦`)
+      .addFields(
+        {name: '🎲', value: 's'}
+      )
+      //.setImage('attachment://farkleTable.png')
 
     let msg = await interaction.editReply({
         embeds: [jizzleEmbed],
@@ -73,5 +78,24 @@ const playJizzle = async (interaction) => {
     return i.user.id === user.id;
   };
 };
+
+class Jizzle {
+  constructor ({d1, d2, d3, state1, state2, state3}) {
+    this.d1 = d1 ? Math.floor(Math.random() * 6) + 1 : d1;
+    this.d2 = d2 ? Math.floor(Math.random() * 6) + 1 : d2;
+    this.d3 = d3 ? Math.floor(Math.random() * 6) + 1 : d3;
+    this.state1 = 'x';
+  }
+  score() {
+
+  }
+  data() {
+    return {d1, d2, d3, state1, state2, state3}
+  }
+}
+
+const runJizzle = () => {
+  const d1 = Math.floor()
+}
 
 module.exports = playJizzle;

@@ -7,7 +7,7 @@ module.exports = {
 		.setDescription("⏱ It's Dave o'clock somewhere! 🎉🎉"),
 	async execute(interaction) {
 		const uncountedWeeks = 127;
-		const discordJoinDate = 1615936548328;
+		const discordJoinDate = 1615680000000;//1615936548328;
 
         const crazyFunc = () => {
             return Math.floor((new Date() - discordJoinDate) / (7 * 24 * 60 * 60 * 1000)) - uncountedWeeks;

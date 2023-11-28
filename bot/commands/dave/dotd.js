@@ -8,7 +8,7 @@ module.exports = {
 		.setDescription("💬 Dave of the Day! 💬"),
 	async execute(interaction) {
         let dotd = await getDotd();
-		
+	
 		if (!dotd) dotd = 'TELL THIS FUCKHEAD DAVE TO UPDATE THE DAVE OF THE DAY';
 
         const dotdEmbed = new EmbedBuilder()

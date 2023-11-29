@@ -1,0 +1,66 @@
+{
+  "Each 1": {
+    "Combination": [1],
+    "Score": 100
+  },
+  "Each 5": {
+    "Combination": [5],
+    "Score": 50
+  },
+  "Two 1s": {
+    "Combination": [1, 1],
+    "Score": 200
+  },
+  "Two 5s": {
+    "Combination": [5, 5],
+    "Score": 100
+  },
+  "Three 1s": {
+    "Combination": [1, 1, 1],
+    "Score": 1000
+  },
+  "Three 2s": {
+    "Combination": [2, 2, 2],
+    "Score": 200
+  },
+  "Three 3s": {
+    "Combination": [3, 3, 3],
+    "Score": 300
+  },
+  "Three 4s": {
+    "Combination": [4, 4, 4],
+    "Score": 400
+  },
+  "Three 5s": {
+    "Combination": [5, 5, 5],
+    "Score": 500
+  },
+  "Three 6s": {
+    "Combination": [6, 6, 6],
+    "Score": 600
+  },
+  "Four 1s": {
+    "Combination": [1, 1, 1, 1],
+    "Score": 1100
+  },
+  "Four 5s": {
+    "Combination": [5, 5, 5, 5],
+    "Score": 550
+  },
+  "Five 1s": {
+    "Combination": [1, 1, 1, 1, 1],
+    "Score": 1200
+  },
+  "Five 5s": {
+    "Combination": [5, 5, 5, 5, 5],
+    "Score": 600
+  },
+  "Six 1s": {
+    "Combination": [1, 1, 1, 1, 1, 1],
+    "Score": 2000
+  },
+  "Six 5s": {
+    "Combination": [5, 5, 5, 5, 5, 5],
+    "Score": 1000
+  }
+}

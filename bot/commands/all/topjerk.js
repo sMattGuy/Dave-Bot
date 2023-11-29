@@ -1,6 +1,7 @@
 const { EmbedBuilder } = require('@discordjs/builders');
 const { SlashCommandBuilder } = require('discord.js');
 const getUsers = require('../../../backend/firestore/main/getUsers');
+const orderedJerk = require('../../../backend/firestore/helper/orderedJerk');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -8,6 +9,7 @@ module.exports = {
 		.setDescription("🔨 Not your average Arby's 🥩"),
 	async execute(interaction) {
 		const usersData = await getUsers();
+		const orderedJerkData = orderedJerk(usersData);
 
 		const meatMaker = (amt) => {
 			let meatText = '';
@@ -20,10 +22,14 @@ module.exports = {
 		let meaterBoard = '';
 
 		let counter = 1;
-		Object.keys(usersData).forEach((id) => {
-			meaterBoard += `${counter}. ${usersData[id].username} ${meatMaker(usersData[id].stats.jerks)}\n`;
+		orderedJerkData.forEach(user => {
+			meaterBoard += `${counter}. ${user.username} ${meatMaker(user.stats.jerks)}\n`;
 			counter++;
 		})
+		/*Object.keys(usersData).forEach((id) => {
+			meaterBoard += `${counter}. ${usersData[id].username} ${meatMaker(usersData[id].stats.jerks)}\n`;
+			counter++;
+		})*/
 
         const meatLeaderboardEmbed = new EmbedBuilder()
             .setTitle('🔨 Meaterboard 🥩')

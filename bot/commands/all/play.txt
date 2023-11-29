@@ -19,7 +19,7 @@ module.exports = {
     
 	async execute(interaction) {
         if (interaction.options.getSubcommand() === 'jizzle') return await playJizzle(interaction);
-        switch (interaction.options.getSubcommand()) {
+        /*switch (interaction.options.getSubcommand()) {
             case 'toptimer':
                 await playTopTimer(interaction);
                 break;
@@ -29,6 +29,6 @@ module.exports = {
         
             default:
                 break;
-        }
+        }*/
 	},
 };

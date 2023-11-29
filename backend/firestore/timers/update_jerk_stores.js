@@ -11,7 +11,7 @@ const updateJerkStores = async () => {
     const tick = timersData.jerkTick;
 
     setInterval(async () => {
-        console.log(`update jerk stores`);
+        //console.log(`update jerk stores`);
 
         try {
             const usersData = await getUsers();

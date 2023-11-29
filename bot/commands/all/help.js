@@ -18,6 +18,8 @@ module.exports = {
                 { name: '/jerk', value: 'Stroke that shii.' },
                 { name: '/topjerk', value: 'Who been strokin the mostin?' },
                 { name: '/jerkme', value: 'Check your stuff.' },
+                { name: '/play', value: 'jizzle, slapjack(Cumming soon)' },
+                { name: '/rules', value: 'jizzle, slapjack(Cumming soon)' },
             )
 
 		let msg = await interaction.reply({ embeds: [helpEmbed] });

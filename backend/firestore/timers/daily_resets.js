@@ -11,22 +11,25 @@ const dailyResets = async () => {
     })*/
 
     const checkToday = (date) => {
-        const today = new Date();
-        const checkDay = date.toDate();
+        let today = new Date();
+        today = new Date(today - (5 * 60 * 60 * 1000));
+        today = today.toUTCString();
+        today = new Date(today).getUTCDate();
+        const checkDay = new Date(date).getUTCDate();//date;
 
-        if (today.toDateString() === checkDay.toDateString()) return true;
+        if (today === checkDay) return true;
         return false;
     }
 
     const reset = async () => {
         // all data to reset, ex: users daily jerks
-        const usersData = getUsers();
+        const usersData = await getUsers();
         const usersBatch = writeBatch(db);
 
         Object.keys(usersData).forEach(id => {
             const userRef = doc(db, 'users', id);
             usersBatch.update(userRef, {
-                'stats.jerks': usersData[id].stats.maxJerks
+                'stats.jerks': 0
             });
         });
 
@@ -38,8 +41,14 @@ const dailyResets = async () => {
         const timersRef = doc(db, 'assets', 'timers');
 
         if (!checkToday(timersData.date)) {
+            console.log('BOT: Jerks Reset')
+
+            // converts to utc minus 5 to be 12 midnight est
+            let changeDate = new Date();
+            changeDate = new Date(changeDate - (5 * 60 * 60 * 1000));
+            changeDate = changeDate.toUTCString();
             await updateDoc(timersRef, {
-                'date': new Date()
+                'date': changeDate
             });
             await reset();
         }

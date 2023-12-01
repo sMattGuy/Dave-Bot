@@ -5,6 +5,7 @@ const { playTopTimer } = require('../../helper/games/toptimer');
 const playJizzle = require('../../helper/games/farkle');
 const farkleRules = require('../../helper/games/rules/farkle.json');
 const slapjackRules = require('../../helper/games/rules/slapjack.json');
+const cumpotRules = require('../../helper/games/rules/cumpot.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -17,6 +18,10 @@ module.exports = {
         .addSubcommand((subcommand) =>
             subcommand
             .setName("slapjack")
+            .setDescription("More to cum..."))
+        .addSubcommand((subcommand) =>
+            subcommand
+            .setName("cumpot")
             .setDescription("More to cum...")),
     
 	async execute(interaction) {
@@ -34,6 +39,12 @@ module.exports = {
                 .setDescription(`${slapjackRules.desc}`)
                 .setFields(slapjackRules.fields)
         }
+        else if (interaction.options.getSubcommand() === 'cumpot') {
+            rulesEmbed
+            .setTitle(`${cumpotRules.title}`)
+            .setDescription(`${cumpotRules.desc}`)
+                .setFields(cumpotRules.fields)
+    }
 
         await interaction.reply({
             embeds: [rulesEmbed]

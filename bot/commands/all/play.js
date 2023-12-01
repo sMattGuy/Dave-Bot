@@ -15,7 +15,12 @@ module.exports = {
         .addSubcommand((subcommand) =>
             subcommand
             .setName("jizzle")
-            .setDescription("Roll some dice and get jizzed on!")),
+            .setDescription("Roll some dice and get jizzed on!")
+            .addNumberOption(option =>
+                option.setName('bet')
+                    .setDescription('How much you wanna wager?')
+                    .setRequired(false)),
+                    ),
     
 	async execute(interaction) {
         if (interaction.options.getSubcommand() === 'jizzle') return await playJizzle(interaction);

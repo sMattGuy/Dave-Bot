@@ -1,8 +1,8 @@
 const invCondenser = (invData) => {
     const shortInv = {};
-    invData.forEach(item => {
-        if (!shortInv?.[item]) shortInv[item] = 1;
-        else shortInv[item]++;
+    invData.forEach(itemId => {
+        if (!shortInv?.[itemId]) shortInv[itemId] = 1;
+        else shortInv[itemId]++;
     });
 
     return shortInv;

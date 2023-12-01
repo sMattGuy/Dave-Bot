@@ -20,21 +20,25 @@ let msg;
 let endInt = false;
 let gameData;
 
-const checkNewGame = () => {
+/*const checkNewGame = () => {
   const checkTimer = setInterval(() => {
   if (startNewGame === true) {
     clearInterval(checkTimer);
+    console.log('cleared!')
     secondGame = true;
     startNewGame = false;
     playJizzle(saveInteraction);
   }
-  else if (endInt) clearInterval(checkTimer);
+  else if (endInt) {
+    clearInterval(checkTimer)
+    console.log('cleared! 2')
+  };
 }, 200);
-}
+}*/
 
 const playJizzle = async (interaction) => {
   if (!secondGame) gameData = await getGameData();
-  checkNewGame();
+  //checkNewGame();
   saveInteraction = interaction;
   const user = interaction.user;
   let currBet = 0;
@@ -73,9 +77,18 @@ const playJizzle = async (interaction) => {
     },
   };
 
+  let startDesc = 'Bet: Send your nut bet below!';
+  currBet = interaction.options.getNumber('bet') || 0;
+  if (currBet > 0) {
+    const userData = await getUser(user);
+    if (currBet > userData.stats.nut) currBet = userData.stats.nut;
+    if (currBet > 30) currBet = 30;
+    startDesc = `Bet: ${currBet}`;
+  }
+
   const jizzleEmbed = new EmbedBuilder()
     .setTitle(`Jizzle! 🎲💦`)
-    .setDescription(`Bet: Send your nut bet below!`);
+    .setDescription(`${startDesc}`);
 
   const startButton = new ButtonBuilder()
     .setCustomId("newGame")
@@ -161,6 +174,10 @@ const playJizzle = async (interaction) => {
   });
 
   jizzleBetCollector.on("collect", async (i) => {
+    if (currBet > 0) {
+      jizzleBetCollector.stop();
+      return;
+    }
     currBet = Math.floor(parseInt(i.content));
     const userData = await getUser(user);
     if (currBet > userData.stats.nut) currBet = userData.stats.nut;
@@ -354,14 +371,14 @@ const playJizzle = async (interaction) => {
           return i.user.id === user.id;
         }
 
-        const newGameCollector = msg.createMessageComponentCollector({
+        /*const newGameCollector = msg.createMessageComponentCollector({
           filter: newGameFilter,
           time: 30000,
-        });
+        });*/
 
         const newGameEmbed = new EmbedBuilder()
           .setTitle(`${newGameTitle}`)
-          .setDescription("🎲 Jizz Again? 💦")
+          .setDescription("Jizz Again? 💦\n/play jizzle")
 
         const newGameButton = new ButtonBuilder()
           .setCustomId('NewGame')
@@ -372,12 +389,14 @@ const playJizzle = async (interaction) => {
 
         await interaction.editReply({
           embeds: [newGameEmbed],
-          components: [newGameRow]
+          components: []
+          //components: [newGameRow]
         });
 
-        let tempI;
-        newGameCollector.on('collect', async i => {
-          tempI = i;
+        //let tempI;
+
+        /*newGameCollector.on('collect', async i => {
+          //tempI = i;
           await i.deferUpdate();
           startNewGame = true;
           newGameCollector.stop();
@@ -386,6 +405,7 @@ const playJizzle = async (interaction) => {
         newGameCollector.on('end', async (collected, reason) => {
           endInt = true;
           if (!startNewGame) {
+            secondGame = false;
             const timeoutEmbed = new EmbedBuilder()
             .setTitle(`You took too long!\nRestart with /play jizzle`)
 
@@ -394,9 +414,11 @@ const playJizzle = async (interaction) => {
               components: []
             });
           }
-        })
+        })*/
       }
-      if (tempI?.customId) return;
+      else {
+      //if (tempI?.customId) return;
+      secondGame = false;
       await updateNut(user, -currBet);
       const timeoutEmbed = new EmbedBuilder()
         .setTitle(`You took too long!\nSay goodbye to your hard earned ${currBet} 💦`)
@@ -407,6 +429,7 @@ const playJizzle = async (interaction) => {
           embeds: [timeoutEmbed],
           components: []
         });
+      }
   })
 };
 
@@ -418,14 +441,34 @@ function calculateScore(diceValues) {
     const scoreOptions = [];
     Object.keys(scoringCombinations).forEach(combo => {
       let diceCopy = [...diceValues].sort((a, b) => a - b);
-      for (let i = diceCopy.length; i > 0; i--) {
-        const checkDice = diceCopy.slice(0, i);
-        if (scoringCombinations[combo].Combination.toString() === checkDice.toString()) {
-          scoreOptions.push({combo: scoringCombinations[combo].Combination, score: scoringCombinations[combo].Score});
+      for (let a = 0; a < diceCopy.length; a++) {
+        let checkDice = [...diceCopy];
+        for (let b = diceCopy.length; b > 0; b--) {
+          checkDice = checkDice.slice(0, b);
+          if (scoringCombinations[combo].Combination.toString() === checkDice.toString()) {
+            scoreOptions.push({combo: scoringCombinations[combo].Combination, score: scoringCombinations[combo].Score});
+          }
         }
+        diceCopy.unshift(diceCopy[diceCopy.length - 1]);
+        diceCopy.pop();
       }
+/*
+      for (let i = diceCopy.length; i > 0; i--) {
+        console.log('new');
+        const checkDice = diceCopy.slice(0, i);
+        for (let b = 0; b < checkDice.length; b++) {
+          console.log('next')
+          console.log(checkDice);
+          if (scoringCombinations[combo].Combination.toString() === checkDice.toString()) {
+            scoreOptions.push({combo: scoringCombinations[combo].Combination, score: scoringCombinations[combo].Score});
+          }
+          checkDice.unshift(checkDice[checkDice.length - 1]);
+          checkDice.pop();
+        }
+      };*/
     });
 
+    console.log(scoreOptions)
     if (scoreOptions.length > 0) {
       scoreOptions.sort((a, b) => b.score - a.score);
       //console.log(scoreOptions);

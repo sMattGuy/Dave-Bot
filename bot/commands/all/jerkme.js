@@ -43,7 +43,7 @@ module.exports = {
 
     Object.keys(shortInv).forEach((itemId) => {
       const item = itemsData[itemId];
-      backpackText += `${item.name} | Quantity: ${shortInv[itemId]}`;
+      backpackText += `${shortInv[itemId]} | ${item.name}\n`;
       itemSelect.addOptions(
         new StringSelectMenuOptionBuilder()
           .setLabel(`${item.name} - "${item.desc}"`)
@@ -151,7 +151,6 @@ module.exports = {
           );
 
         if (userData.items.backpack.length > 0) {
-          backpackText = "";
           await i.update({
             embeds: [newStatsEmbed],
             components: [row1, row2],

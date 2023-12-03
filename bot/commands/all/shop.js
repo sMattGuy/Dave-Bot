@@ -78,6 +78,7 @@ module.exports = {
     let msg = await interaction.reply({
       embeds: [shopEmbed],
       components: [row1, row2],
+      ephemeral: true
     });
 
     const shopFilter = (i) => {
@@ -104,9 +105,8 @@ module.exports = {
         shopCollector.stop('leave');
         return;
       }
+
       let itemId = i.values[0];
-      console.log(user.stats.nutBricks)
-      console.log(itemsData[itemId].priceBase)
       if (user.stats.nutBricks >= itemsData[itemId].priceBase) {
         await addItem(user, itemId, itemsData[itemId].priceBase, 'nutBricks');
 
@@ -116,6 +116,7 @@ module.exports = {
         .setFields(
           { name: '| Bill of Sale |', value: `${itemsData[itemId].name}` }
         )
+        .setImage(`${itemsData[itemId].img}`)
 
         msg = await i.update({
           embeds: [shopEmbed],

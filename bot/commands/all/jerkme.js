@@ -12,6 +12,7 @@ const getUser = require("../../../backend/firestore/main/getUser");
 const invCondenser = require("../../helper/inv_condenser");
 const getItems = require("../../../backend/firestore/utility/get_items");
 const convertNut = require("../../../backend/firestore/main/convertNut");
+const { useItem } = require("../../helper/items/use_item");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -117,12 +118,16 @@ module.exports = {
 
     const buttonCollector = msg.createMessageComponentCollector({
       filter: buttonFilter,
-      time: 10000,
+      time: 90000,
     });
 
     buttonCollector.on("collect", async (i) => {
-      const choice = i.customId;
-      if (choice === "convert") {
+      const choice = i?.values?.[0] || i.customId;
+      if (i?.values?.[0]) {
+        buttonCollector.stop();
+        await useItem(i, userData, choice, itemsData);
+      }
+      else if (choice === "convert") {
         await convertNut(user);
         convertNutButton.setDisabled(true);
         userData = await getUser(user);

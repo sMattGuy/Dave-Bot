@@ -8,6 +8,7 @@ module.exports = {
 	async execute(interaction) {
         const helpEmbed = new EmbedBuilder()
             .setTitle('Dave Help')
+            .setDescription('Art Creds: Lilithan Xanthaniel')
             .addFields(
                 { name: '~DAVE COMMANDS~', value: 'All things Dave are below.' },
                 { name: '/dave', value: 'See Daves time with us. (his days are numbered)' },

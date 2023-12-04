@@ -21,7 +21,7 @@ module.exports = {
   async execute(interaction) {
     const user = interaction.user;
     let userData = await getUser(user);
-    const itemsData = await getItems();
+    //const itemsData = await getItems();
     //console.log(itemsData);
 
     let statsDesc = ""; //`Nut Blocks: ${userData.stats.nutBlocks} 💦🧱\nNut: ${userData.stats.nut} 💦\nBalls: ${userData.stats.jerkStores}/200 💦`;
@@ -32,7 +32,7 @@ module.exports = {
     statsDesc +=
       "Clippy says: If you store more nut in the balls, you generate more nut more faster!";
 
-    const shortInv = invCondenser(userData.items.backpack);
+    //const shortInv = invCondenser(userData.items.backpack);
 
     let backpackText = '';
 
@@ -42,20 +42,20 @@ module.exports = {
 
     const row1 = new ActionRowBuilder().addComponents(itemSelect);
 
-    Object.keys(shortInv).forEach((itemId) => {
-      const item = itemsData[itemId];
-      backpackText += `${shortInv[itemId]} | ${item.name}\n`;
+    Object.keys(userData.items.backpack).forEach((itemId) => {
+      const item = userData.items.backpack[itemId];
+      backpackText += `${item?.quantity ? `Quantity: ${item?.quantity}` : `Uses: ${item.uses}`} | ${item.name}${item?.level ? ` | Level: ${item.level}` : ''}\n`;
       itemSelect.addOptions(
         new StringSelectMenuOptionBuilder()
           .setLabel(`${item.name} - "${item.desc}"`)
           .setDescription(
-            `Quantity: ${shortInv[itemId]} | Type: ${
+            `${item?.quantity ? `Quantity: ${item.quantity}` : `Uses: ${item.uses}`} | Type: ${
               item.type === "consumable"
                 ? "one-shot"
                 : item.type === "upgrade"
                 ? "upgrade"
                 : "unknown"
-            }`
+            }${item?.level ? ` | Level: ${item.level}` : ''}`
           )
           .setValue(`${itemId}`)
       );
@@ -94,11 +94,21 @@ module.exports = {
 
     if (userData.stats.nut < 1000) convertNutButton.setDisabled(true);
 
-    const row2 = new ActionRowBuilder().addComponents(convertNutButton);
+    const cleanBusterButton = new ButtonBuilder()
+        .setCustomId("cleanBuster")
+        .setLabel("🧰 Clean Nut Buster 🔦 [💦 300]")
+        .setStyle(ButtonStyle.Primary)
+        .setDisabled(true)
+
+    if (Object.keys(userData.items.backpack).includes('nut_buster')) {
+      cleanBusterButton.setDisabled(false)
+    }
+
+    const row2 = new ActionRowBuilder().addComponents(convertNutButton, cleanBusterButton);
 
     let msg;
 
-    if (userData.items.backpack.length > 0) {
+    if (Object.keys(userData.items.backpack).length > 0) {
       msg = await interaction.reply({
         embeds: [statsEmbed],
         components: [row1, row2],
@@ -125,7 +135,9 @@ module.exports = {
       const choice = i?.values?.[0] || i.customId;
       if (i?.values?.[0]) {
         buttonCollector.stop();
-        await useItem(i, userData, choice, itemsData);
+        userData.items.backpack[choice].id = choice;
+        await i.deferUpdate();
+        await useItem(interaction, userData, userData.items.backpack[choice]);
       }
       else if (choice === "convert") {
         await convertNut(user);

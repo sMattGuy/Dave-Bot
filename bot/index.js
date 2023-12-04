@@ -4,12 +4,13 @@ const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const updateJerkStores = require('../backend/firestore/timers/update_jerk_stores');
 const dailyResets = require('../backend/firestore/timers/daily_resets');
 const { toptimer } = require('./helper/games/toptimer');
+const { addField } = require('../backend/firestore/admin/temp/add_field');
 
 require('dotenv').config();
 
 let token = process.env.TOKEN;
 
-const client = new Client({intents:[GatewayIntentBits.GuildMessages, GatewayIntentBits.Guilds, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageReactions]});
+const client = new Client({intents:[GatewayIntentBits.GuildMessages, GatewayIntentBits.Guilds, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.DirectMessages]});
 
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');

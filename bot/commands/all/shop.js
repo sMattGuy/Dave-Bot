@@ -107,8 +107,20 @@ module.exports = {
       }
 
       let itemId = i.values[0];
+      if (user.items.backpack?.[itemId]?.uses) {
+        shopEmbed
+        .setTitle(`~ Merchant ~\nYou have: 🧱 ${user.stats.nutBricks}`)
+        .setDescription(`You can still use your ${itemsData[itemId].name}! Anything else?`)
+
+        msg = await i.update({
+          embeds: [shopEmbed],
+          components: [row1, row2],
+        });
+
+        return;
+      }
       if (user.stats.nutBricks >= itemsData[itemId].priceBase) {
-        await addItem(user, itemId, itemsData[itemId].priceBase, 'nutBricks');
+        await addItem(user, itemId, itemsData[itemId], 'nutBricks');
 
         shopEmbed
         .setTitle('~ Merchant ~')

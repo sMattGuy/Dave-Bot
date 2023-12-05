@@ -43,7 +43,12 @@ for (const file of eventFiles) {
 	}
 }
 
+// functions to run on bot start
+//addField();
 //toptimer();
 dailyResets();
 updateJerkStores();
+
 client.login(token);
+
+//module.exports = client;

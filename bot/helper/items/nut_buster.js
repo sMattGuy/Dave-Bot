@@ -5,7 +5,7 @@ const { removeItem } = require("../../../backend/firestore/utility/remove_item")
 const { updateSeek } = require("../../../backend/firestore/utility/update_seek");
 const { updateNut } = require("../../../backend/firestore/main/update_nut");
 const { updateBalls } = require("../../../backend/firestore/main/update_balls");
-//const client = new Client()
+//const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 exports.nutBuster = async (i, userData, item) => {
     const user = i.user;
@@ -50,8 +50,8 @@ exports.nutBuster = async (i, userData, item) => {
         components: [optionRow]
     });
 
-    const itemFilter = i => {
-        return i.user.id === user.id;
+    const itemFilter = int => {
+        return int.user.id === user.id;
     }
 
     const itemCollector = msg.createMessageComponentCollector({
@@ -59,25 +59,26 @@ exports.nutBuster = async (i, userData, item) => {
         time: 60000
     });
 
-    itemCollector.on('collect', async (i) => {
+    itemCollector.on('collect', async (int) => {
         await removeItem(userData, item);
-        const bustId = i.customId;
+        const bustId = int.customId;
         const nutAmt = Math.floor(usersData[bustId].stats.jerkStores / item.levelStats.extractDivider[item.level - 1]);
-        await updateSeek(user, seeked.filter(id => id !== bustId));
-        await updateNut(user, nutAmt);
-        await updateBalls({id: bustId}, -nutAmt);
+        //await updateSeek(user, seeked.filter(id => id !== bustId));
+        //await updateNut(user, nutAmt);
+        //await updateBalls({id: bustId}, -nutAmt);
         itemEmbed
             .setDescription(`💦 🔦 You extracted 💦 ${nutAmt} from ${usersData[bustId].username}'s balls!
             \nYou now have 💦 ${userData.stats.nut + nutAmt}`)
             .setFields();
-        await i.update({
+        await int.update({
             embeds: [itemEmbed],
             components: []
         });
         const dmEmbed = new EmbedBuilder()
             .setTitle(`😡 ${userData.username} extracted 💦 ${nutAmt} from your balls! 😡`)
-        //const bustSnowflake = await client.users.fetch('146113420498829313')
-        //await bustSnowflake.send(`146113420498829313`, { embeds: [dmEmbed] });
+        //const bustSnowflake = await client.users.fetch('146113420498829313');
+        //console.log(bustSnowflake)
+        //await bustSnowflake.send(bustSnowflake, { embeds: [dmEmbed] });
         itemCollector.stop();
     });
 

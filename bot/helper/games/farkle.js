@@ -350,7 +350,7 @@ const playJizzle = async (interaction) => {
 
   jizzleButtonCollector.on('end', async (collected, reason) => {
       if (reason === 'game over') {
-        const winAmt = roll === 0
+        let winAmt = roll === 0
           ? currBet * 3
           : roll === 1
           ? currBet * 2
@@ -359,9 +359,9 @@ const playJizzle = async (interaction) => {
           : 0;
         let newGameTitle = '';
         if (score >= gameData.jizzleBeatScore) {
-          if (score > gameData.jizzle5xScore) winAmt = currBet * 5;
+          if (score >= gameData.jizzle5xScore) winAmt = currBet * 5;
           const userUpdated = await updateNut(user, winAmt - currBet);
-          newGameTitle = `You won ${winAmt} 💦\nFinal Score: ${score}\nCurrent Nut Stored: ${userUpdated.stats.nut} 💦`;
+          newGameTitle = `You won ${winAmt} 💦\nFinal Score: ${score} (x5 Payout)\nCurrent Nut Stored: ${userUpdated.stats.nut} 💦`;
         }
         else {
           const userUpdated = await updateNut(user, -currBet);

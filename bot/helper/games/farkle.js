@@ -12,6 +12,7 @@ const { getGameData } = require("../../../backend/firestore/utility/get_gameData
 const { updateNut } = require("../../../backend/firestore/main/update_nut");
 const scoringCombinations = require('./farkleCombos.json');
 const getUser = require("../../../backend/firestore/main/getUser");
+const { updateJizzleTracker } = require("../../../backend/firestore/utility/update_jizzle_tracker");
 
 let startNewGame = false;
 let saveInteraction;
@@ -361,10 +362,12 @@ const playJizzle = async (interaction) => {
         if (score >= gameData.jizzleBeatScore) {
           if (score >= gameData.jizzle5xScore) winAmt = currBet * 5;
           const userUpdated = await updateNut(user, winAmt - currBet);
+          await updateJizzleTracker(true);
           newGameTitle = `You won ${winAmt} 💦\nFinal Score: ${score} (x5 Payout)\nCurrent Nut Stored: ${userUpdated.stats.nut} 💦`;
         }
         else {
           const userUpdated = await updateNut(user, -currBet);
+          await updateJizzleTracker(false);
           newGameTitle = `You lost ${currBet} 💦\nFinal Score: ${score}\nCurrent Nut Stored: ${userUpdated.stats.nut} 💦`
         }
 

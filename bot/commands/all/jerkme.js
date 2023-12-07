@@ -13,6 +13,13 @@ const invCondenser = require("../../helper/inv_condenser");
 const getItems = require("../../../backend/firestore/utility/get_items");
 const convertNut = require("../../../backend/firestore/main/convertNut");
 const { useItem } = require("../../helper/items/use_item");
+const {
+  updateItemTimer,
+} = require("../../../backend/firestore/utility/updateItemTimer");
+const { updateNut } = require("../../../backend/firestore/main/update_nut");
+const {
+  updateNutBusterUses,
+} = require("../../../backend/firestore/utility/update_nutBuster_uses");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -34,7 +41,8 @@ module.exports = {
 
     //const shortInv = invCondenser(userData.items.backpack);
 
-    let backpackText = '';
+    let backpackText = "";
+    let upgradesText = "";
 
     const itemSelect = new StringSelectMenuBuilder()
       .setCustomId("item")
@@ -44,24 +52,35 @@ module.exports = {
 
     Object.keys(userData.items.backpack).forEach((itemId) => {
       const item = userData.items.backpack[itemId];
-      backpackText += `${item?.quantity ? `Quantity: ${item?.quantity}` : `Uses: ${item.uses}`} | ${item.name}${item?.level ? ` | Level: ${item.level}` : ''}\n`;
+      backpackText += `${
+        item?.quantity ? `Quantity: ${item?.quantity}` : `Uses: ${item.uses}`
+      } | ${item.name}${
+        item?.level
+          ? ` | Level: ${item.level} / ${item.levelStats.maxLevel}`
+          : ""
+      }\n`;
       itemSelect.addOptions(
         new StringSelectMenuOptionBuilder()
           .setLabel(`${item.name} - "${item.desc}"`)
           .setDescription(
-            `${item?.quantity ? `Quantity: ${item.quantity}` : `Uses: ${item.uses}`} | Type: ${
+            `${
+              item?.quantity
+                ? `Quantity: ${item.quantity}`
+                : `Uses: ${item.uses}`
+            } | Type: ${
               item.type === "consumable"
                 ? "one-shot"
                 : item.type === "upgrade"
                 ? "upgrade"
                 : "unknown"
-            }${item?.level ? ` | Level: ${item.level}` : ''}`
+            }${item?.level ? ` | Level: ${item.level}` : ""}`
           )
           .setValue(`${itemId}`)
       );
     });
 
     if (!backpackText) backpackText = "Broke ahh 😔";
+    if (!upgradesText) upgradesText = "You lookin hella normal right now bro 🤓"
 
     const statsEmbed = new EmbedBuilder()
       .setTitle("🥩 My Stuff 🧱")
@@ -84,7 +103,8 @@ module.exports = {
             userData.stats.maxJerks
           }`,
         },
-        { name: "Backpack", value: `${backpackText}` }
+        { name: "Backpack", value: `${backpackText}`, inline: true },
+        { name: "Nutgrades", value: `${upgradesText}`, inline: true }
       );
 
     const convertNutButton = new ButtonBuilder()
@@ -95,16 +115,19 @@ module.exports = {
     if (userData.stats.nut < 1000) convertNutButton.setDisabled(true);
 
     const cleanBusterButton = new ButtonBuilder()
-        .setCustomId("cleanBuster")
-        .setLabel("🧰 Clean Nut Buster 🔦 [💦 300]")
-        .setStyle(ButtonStyle.Primary)
-        .setDisabled(true)
+      .setCustomId("cleanBuster")
+      .setLabel("🧰 Clean Nut Buster 🔦 [💦 300]")
+      .setStyle(ButtonStyle.Primary)
+      .setDisabled(true);
 
-    if (Object.keys(userData.items.backpack).includes('nut_buster')) {
-      cleanBusterButton.setDisabled(false)
+    if (Object.keys(userData.items.backpack).includes("nut_buster")) {
+      cleanBusterButton.setDisabled(false);
     }
 
-    const row2 = new ActionRowBuilder().addComponents(convertNutButton, cleanBusterButton);
+    const row2 = new ActionRowBuilder().addComponents(
+      convertNutButton,
+      cleanBusterButton
+    );
 
     let msg;
 
@@ -138,8 +161,7 @@ module.exports = {
         userData.items.backpack[choice].id = choice;
         await i.deferUpdate();
         await useItem(interaction, userData, userData.items.backpack[choice]);
-      }
-      else if (choice === "convert") {
+      } else if (choice === "convert") {
         await convertNut(user);
         convertNutButton.setDisabled(true);
         userData = await getUser(user);
@@ -182,6 +204,65 @@ module.exports = {
         }
 
         buttonCollector.stop("Button Clicked");
+      } else if (choice === "cleanBuster") {
+        if (userData.stats.nut - 300 < 0) {
+          const cleanBuster = new EmbedBuilder().setTitle(
+            "🔦 You need 300 💦 to clean your Nut Buster! ❌💦"
+          );
+
+          buttonCollector.stop("Button Clicked");
+
+          return await i.update({
+            embeds: [cleanBuster],
+            components: [],
+          });
+        }
+
+        let currUseTime = new Date();
+        let checkTime = new Date(userData.items.backpack?.nut_buster.lastClean);
+        const timePassed = currUseTime.getTime() - checkTime.getTime();
+        if (
+          !userData.items.backpack?.nut_buster.lastClean ||
+          timePassed >
+          userData.items.backpack?.nut_buster.levelStats.cleanTimer[
+            userData.items.backpack?.nut_buster.level - 1
+          ] *
+            60 *
+            60 *
+            1000
+        ) {
+          await updateItemTimer(user, "items.backpack.nut_buster.lastClean");
+          await updateNut(user, -300);
+          await updateNutBusterUses(user, 4);
+
+          const cleanBuster = new EmbedBuilder()
+            .setTitle("🔦 You sent your Nut Buster in for a deep clean! 🧹")
+            .setDescription(
+              `You have 4 more uses!\nYou can use your Nut Buster in ${
+                userData.items.backpack.nut_buster.levelStats.cleanTimer[
+                  userData.items.backpack.nut_buster.level - 1
+                ]
+              } Hours\n
+            If you increase your Nut Buster's level, it will be easier to clean! 🤢💦`
+            );
+
+          buttonCollector.stop("Button Clicked");
+
+          return await i.update({
+            embeds: [cleanBuster],
+            components: [],
+          });
+        } else {
+          const cleanBuster = new EmbedBuilder()
+            .setTitle("🔦 Your Nut Buster is already out for a deep clean! 🧹");
+
+          buttonCollector.stop("Button Clicked");
+
+          return await i.update({
+            embeds: [cleanBuster],
+            components: [],
+          });
+        }
       }
     });
 

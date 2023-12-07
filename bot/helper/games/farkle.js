@@ -363,7 +363,7 @@ const playJizzle = async (interaction) => {
           if (score >= gameData.jizzle5xScore) winAmt = currBet * 5;
           const userUpdated = await updateNut(user, winAmt - currBet);
           await updateJizzleTracker(true);
-          newGameTitle = `You won ${winAmt} 💦\nFinal Score: ${score} (x5 Payout)\nCurrent Nut Stored: ${userUpdated.stats.nut} 💦`;
+          newGameTitle = `You won ${winAmt} 💦\nFinal Score: ${score}${score >= gameData.jizzle5xScore ? ' (x5 Payout)' : ''}\nCurrent Nut Stored: ${userUpdated.stats.nut} 💦`;
         }
         else {
           const userUpdated = await updateNut(user, -currBet);

@@ -43,6 +43,8 @@ for (const file of eventFiles) {
 	}
 }
 
+exports.getUserSnowflake = async (id) => await client.users.fetch(`${id}`);
+
 // functions to run on bot start
 //addField();
 //toptimer();
@@ -50,5 +52,3 @@ dailyResets();
 updateJerkStores();
 
 client.login(token);
-
-//module.exports = client;

@@ -119,8 +119,26 @@ module.exports = {
 
         return;
       }
+      if (user.items.upgrades?.[itemId]) {
+        if (itemId === 'foot_storage') {
+          itemsData[itemId].name = itemsData[itemId].level === 1
+          ? 'Left Foot Storage'
+          : 'Right Foot Storage';
+        }
+        shopEmbed
+        .setTitle(`~ Merchant ~\nYou have: 🧱 ${user.stats.nutBricks}`)
+        .setDescription(`You already own ${itemsData[itemId].name}! Anything else?`)
+
+        msg = await i.update({
+          embeds: [shopEmbed],
+          components: [row1, row2],
+        });
+
+        return;
+      }
       if (user.stats.nutBricks >= itemsData[itemId].priceBase) {
-        await addItem(user, itemId, itemsData[itemId], 'nutBricks');
+        if (itemsData[itemId].type === consumable) await addItem(user, itemId, itemsData[itemId], 'nutBricks');
+        else if (itemsData[itemId].type === upgrade) await addUpgrade(user, itemId, itemsData[itemId], 'nutBricks');
 
         shopEmbed
         .setTitle('~ Merchant ~')

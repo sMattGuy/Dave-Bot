@@ -15,7 +15,7 @@ const dailyResets = async () => {
         today = new Date(today - (5 * 60 * 60 * 1000));
         today = today.toUTCString();
         today = new Date(today).getUTCDate();
-        const checkDay = new Date(date).getUTCDate();//date;
+        const checkDay = new Date(date).getUTCDate();
 
         if (today === checkDay) return true;
         return false;

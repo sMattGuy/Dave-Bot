@@ -29,11 +29,33 @@ module.exports = {
     //const itemsData = await getItems();
     //console.log(itemsData);
 
+    let genFields = (data) => {
+      return [{
+        name: "Nut Bricks",
+        value: `🧱 ${data.stats.nutBricks}`,
+        inline: true,
+      },
+      { name: "Nut", value: `💦 ${data.stats.nut}`, inline: true },
+      {
+        name: "Balls",
+        value: `💧 ${data.stats.jerkStores}/${data.ballsMax}`,
+        inline: true,
+      },
+      {
+        name: "Daily Jerks Remaining",
+        value: `${data.stats.maxJerks - data.stats.jerks}/${
+          data.stats.maxJerks
+        }`,
+      },
+      { name: "Backpack", value: `${backpackText}`, inline: true },
+      { name: "Nutgrades", value: `${upgradesText}`, inline: true }
+    ]}
     let statsDesc = ""; //`Nut Blocks: ${userData.stats.nutBlocks} 💦🧱\nNut: ${userData.stats.nut} 💦\nBalls: ${userData.stats.jerkStores}/200 💦`;
-    if (userData.items?.foot_storage === 1)
-      statsDesc += `\nLeft Foot: ${userData.stats.leftFootStores}/100`;
+    userData.ballsMax = '200';
+    if (Object.keys(userData.items.upgrades).includes('left_foot_storage'))
+      userData.ballsMax = '400';
     if (userData.items?.foot_storage === 2)
-      statsDesc += `\nRight Foot: ${userData.stats.rightFootStores}/100`;
+      userData.ballsMax = '600';
     statsDesc +=
       "Clippy says: If you store more nut in the balls, you generate more nut more faster!";
 
@@ -41,6 +63,11 @@ module.exports = {
 
     let backpackText = "";
     let upgradesText = "";
+
+    Object.keys(userData.items.upgrades).forEach((itemId) => {
+      const item = userData.items.upgrades[itemId];
+      upgradesText += `${item.name}\n${item.info}`;
+    })
 
     const itemSelect = new StringSelectMenuBuilder()
       .setCustomId("item")
@@ -84,27 +111,7 @@ module.exports = {
     const statsEmbed = new EmbedBuilder()
       .setTitle("🥩 My Stuff 🧱")
       .setDescription(`${statsDesc}`)
-      .addFields(
-        {
-          name: "Nut Bricks",
-          value: `🧱 ${userData.stats.nutBricks}`,
-          inline: true,
-        },
-        { name: "Nut", value: `💦 ${userData.stats.nut}`, inline: true },
-        {
-          name: "Balls",
-          value: `💧 ${userData.stats.jerkStores}/200`,
-          inline: true,
-        },
-        {
-          name: "Daily Jerks Remaining",
-          value: `${userData.stats.maxJerks - userData.stats.jerks}/${
-            userData.stats.maxJerks
-          }`,
-        },
-        { name: "Backpack", value: `${backpackText}`, inline: true },
-        { name: "Nutgrades", value: `${upgradesText}`, inline: true }
-      );
+      .setFields(genFields(userData));
 
     const convertNutButton = new ButtonBuilder()
       .setCustomId("convert")
@@ -167,26 +174,7 @@ module.exports = {
         const newStatsEmbed = new EmbedBuilder()
           .setTitle("🥩 My Stuff 🧱")
           .setDescription(`${statsDesc}`)
-          .addFields(
-            {
-              name: "Nut Bricks",
-              value: `🧱  ${userData.stats.nutBricks}`,
-              inline: true,
-            },
-            { name: "Nut", value: `💦  ${userData.stats.nut}`, inline: true },
-            {
-              name: "Balls",
-              value: `💧  ${userData.stats.jerkStores}/200`,
-              inline: true,
-            },
-            {
-              name: "Daily Jerks Remaining",
-              value: `${userData.stats.maxJerks - userData.stats.jerks}/${
-                userData.stats.maxJerks
-              }`,
-            },
-            { name: "Backpack", value: `${backpackText}` }
-          );
+          .setFields(genFields(userData));
 
         if (userData.items.backpack.length > 0) {
           await i.update({

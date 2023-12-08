@@ -14,6 +14,7 @@ const {
   getMerchant,
 } = require("../../../backend/firestore/utility/get_merchant");
 const { addItem } = require("../../../backend/firestore/utility/add_item");
+const { addUpgrade } = require("../../../backend/firestore/utility/add_upgrade");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -120,11 +121,6 @@ module.exports = {
         return;
       }
       if (user.items.upgrades?.[itemId]) {
-        if (itemId === 'foot_storage') {
-          itemsData[itemId].name = itemsData[itemId].level === 1
-          ? 'Left Foot Storage'
-          : 'Right Foot Storage';
-        }
         shopEmbed
         .setTitle(`~ Merchant ~\nYou have: 🧱 ${user.stats.nutBricks}`)
         .setDescription(`You already own ${itemsData[itemId].name}! Anything else?`)
@@ -137,8 +133,8 @@ module.exports = {
         return;
       }
       if (user.stats.nutBricks >= itemsData[itemId].priceBase) {
-        if (itemsData[itemId].type === consumable) await addItem(user, itemId, itemsData[itemId], 'nutBricks');
-        else if (itemsData[itemId].type === upgrade) await addUpgrade(user, itemId, itemsData[itemId], 'nutBricks');
+        if (itemsData[itemId].type === 'consumable') await addItem(user, itemId, itemsData[itemId], 'nutBricks');
+        else if (itemsData[itemId].type === 'upgrade') await addUpgrade(user, itemId, itemsData[itemId], 'nutBricks');
 
         shopEmbed
         .setTitle('~ Merchant ~')

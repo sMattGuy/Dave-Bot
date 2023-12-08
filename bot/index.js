@@ -5,6 +5,7 @@ const updateJerkStores = require('../backend/firestore/timers/update_jerk_stores
 const dailyResets = require('../backend/firestore/timers/daily_resets');
 const { toptimer } = require('./helper/games/toptimer');
 const { addField } = require('../backend/firestore/admin/temp/add_field');
+const { changeToMap } = require('../backend/firestore/admin/temp/change_to_map');
 
 require('dotenv').config();
 
@@ -46,6 +47,7 @@ for (const file of eventFiles) {
 //const getUserSnowflake = async (id) => await client.users.fetch(`${id}`);
 
 // functions to run on bot start
+//changeToMap();
 //addField();
 //toptimer();
 dailyResets();

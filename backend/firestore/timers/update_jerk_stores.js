@@ -24,10 +24,6 @@ const updateJerkStores = async () => {
         }
     }
 
-    let jerkMult = storesData.base.jerkMult;
-    let max = storesData.base.max;
-    let jumpFrom = storesData.base.jumpFrom;
-
     const tick = timersData.jerkTick;
 
     setInterval(async () => {
@@ -38,22 +34,29 @@ const updateJerkStores = async () => {
             const storesBatch = writeBatch(db);
 
             Object.keys(usersData).forEach(id => {
+                let jerkMult = storesData.base.jerkMult;
+                let max = storesData.base.max;
+                let jumpFrom = storesData.base.jumpFrom;
+
                 let currentJerkStores = usersData[id].stats.jerkStores;
-                if (usersData[id].items.upgrades?.foot_storage?.level === 1) {
-                    max = storesData.foot1.max;
-                    jumpFrom = storesData.foot1.jumpFrom;
-                    jerkMult = storesData.foot1.jerkMult;
-                }
-                else if (usersData[id].items.upgrades?.foot_storage?.level === 2) {
+                if (Object.keys(usersData[id].items.upgrades).includes('right_foot_storage')) {
                     max = storesData.foot2.max;
                     jumpFrom = storesData.foot2.jumpFrom;
                     jerkMult = storesData.foot2.jerkMult;
                 }
+                else if (Object.keys(usersData[id].items.upgrades).includes('left_foot_storage')) {
+                    max = storesData.foot1.max;
+                    jumpFrom = storesData.foot1.jumpFrom;
+                    jerkMult = storesData.foot1.jerkMult;
+                }
 
-                if (currentJerkStores >= max) return;
+                /*console.log(max)
+                console.log(jumpFrom)
+                console.log(jerkMult)*/
 
                 const userRef = doc(db, 'users', id);
-                if (currentJerkStores >= jumpFrom) { // bigger jump at the end to avoid 199 to 200 increase of 1
+                if (currentJerkStores >= max) return; // shouldnt technically need this line
+                else if (currentJerkStores >= jumpFrom) { // bigger jump at the end to avoid 199 to 200 increase of 1, etc
                     storesBatch.update(userRef, {
                         'stats.jerkStores': max
                     });

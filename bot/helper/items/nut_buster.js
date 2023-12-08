@@ -105,12 +105,12 @@ exports.nutBuster = async (i, userData, item) => {
     });
 
     itemCollector.on('collect', async (int) => {
-        //await removeItem(userData, item, true);
+        await removeItem(userData, item, true);
         const bustId = int.customId;
         const nutAmt = Math.floor(usersData[bustId].stats.jerkStores / item.levelStats.extractDivider[item.level - 1]);
-        //await updateSeek(user, seeked.filter(id => id !== bustId));
-        //await updateNut(user, nutAmt);
-        //await updateBalls({id: bustId}, -nutAmt);
+        await updateSeek(user, seeked.filter(id => id !== bustId));
+        await updateNut(user, nutAmt);
+        await updateBalls({id: bustId}, -nutAmt);
         itemEmbed
             .setDescription(`💦 🔦 You extracted 💦 ${nutAmt} from ${usersData[bustId].username}'s balls!
             \nYou now have 💦 ${userData.stats.nut + nutAmt}`)

@@ -2,7 +2,7 @@ const { removeItem } = require("../../../backend/firestore/utility/remove_item")
 const { nutBuster } = require("./nut_buster");
 const { semenSeeker } = require("./semen_seeker");
 
-exports.useItem = async (interaction, userData, itemData) => {
+const useItem = async (interaction, userData, itemData) => {
     const user = interaction.user;
     switch (itemData.id) {
         case 'semen_seeker':
@@ -14,3 +14,5 @@ exports.useItem = async (interaction, userData, itemData) => {
             break;
     }
 }
+
+module.exports = useItem;

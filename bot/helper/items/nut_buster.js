@@ -1,12 +1,15 @@
 const { EmbedBuilder, ButtonBuilder, ActionRowBuilder } = require("@discordjs/builders");
-const { ButtonStyle, Client } = require("discord.js");
+const { ButtonStyle } = require("discord.js");
 const getUsers = require("../../../backend/firestore/main/getUsers");
 const { removeItem } = require("../../../backend/firestore/utility/remove_item");
 const { updateSeek } = require("../../../backend/firestore/utility/update_seek");
 const { updateNut } = require("../../../backend/firestore/main/update_nut");
 const { updateBalls } = require("../../../backend/firestore/main/update_balls");
-const client = require("../..");
-//const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+
+let client = null;
+exports.receiveClient = (clientClass) => {
+    client = clientClass;
+}
 
 exports.nutBuster = async (i, userData, item) => {
     const user = i.user;
@@ -50,9 +53,7 @@ exports.nutBuster = async (i, userData, item) => {
 
     if (item.cooldown.lastUse) {
         let checkTime = new Date(item.cooldown.lastUse);
-        console.log(checkTime);
         const timePassed = currUseTime.getTime() - checkTime.getTime();
-        console.log(timePassed)
         if (timePassed < item.cooldown.baseMin * 60 * 1000) {
             let timeLeft = '';
             timeLeft += `${Math.floor(((item.cooldown.baseMin * 60 * 1000) - timePassed) / 60 / 1000)} more minutes`;
@@ -104,12 +105,12 @@ exports.nutBuster = async (i, userData, item) => {
     });
 
     itemCollector.on('collect', async (int) => {
-        await removeItem(userData, item, true);
+        //await removeItem(userData, item, true);
         const bustId = int.customId;
         const nutAmt = Math.floor(usersData[bustId].stats.jerkStores / item.levelStats.extractDivider[item.level - 1]);
-        await updateSeek(user, seeked.filter(id => id !== bustId));
-        await updateNut(user, nutAmt);
-        await updateBalls({id: bustId}, -nutAmt);
+        //await updateSeek(user, seeked.filter(id => id !== bustId));
+        //await updateNut(user, nutAmt);
+        //await updateBalls({id: bustId}, -nutAmt);
         itemEmbed
             .setDescription(`💦 🔦 You extracted 💦 ${nutAmt} from ${usersData[bustId].username}'s balls!
             \nYou now have 💦 ${userData.stats.nut + nutAmt}`)
@@ -120,7 +121,7 @@ exports.nutBuster = async (i, userData, item) => {
         });
         const dmEmbed = new EmbedBuilder()
             .setTitle(`😡 ${userData.username} extracted 💦 ${nutAmt} from your balls! 😡`)
-        const bustSnowflake = await client.getUserSnowflake(`${bustId}`);
+        const bustSnowflake = await client.users.fetch(`${bustId}`)
         await bustSnowflake.send({ embeds: [dmEmbed] });
         itemCollector.stop();
     });

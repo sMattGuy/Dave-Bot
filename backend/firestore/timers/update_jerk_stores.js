@@ -24,9 +24,9 @@ const updateJerkStores = async () => {
         }
     }
 
-    let jerkMult = 1.03;
-    let max = storesData.base;
-    let jumpFrom = storesData.jumpFrom;
+    let jerkMult = storesData.base.jerkMult;
+    let max = storesData.base.max;
+    let jumpFrom = storesData.base.jumpFrom;
 
     const tick = timersData.jerkTick;
 

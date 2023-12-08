@@ -43,7 +43,7 @@ for (const file of eventFiles) {
 	}
 }
 
-exports.getUserSnowflake = async (id) => await client.users.fetch(`${id}`);
+//const getUserSnowflake = async (id) => await client.users.fetch(`${id}`);
 
 // functions to run on bot start
 //addField();

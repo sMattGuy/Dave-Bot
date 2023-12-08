@@ -1,4 +1,3 @@
-const { EmbedBuilder } = require("@discordjs/builders");
 const {
   SlashCommandBuilder,
   ButtonBuilder,
@@ -6,13 +5,10 @@ const {
   ActionRowBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
+  EmbedBuilder,
 } = require("discord.js");
-const getUsers = require("../../../backend/firestore/main/getUsers");
 const getUser = require("../../../backend/firestore/main/getUser");
-const invCondenser = require("../../helper/inv_condenser");
-const getItems = require("../../../backend/firestore/utility/get_items");
 const convertNut = require("../../../backend/firestore/main/convertNut");
-const { useItem } = require("../../helper/items/use_item");
 const {
   updateItemTimer,
 } = require("../../../backend/firestore/utility/updateItemTimer");
@@ -20,11 +16,13 @@ const { updateNut } = require("../../../backend/firestore/main/update_nut");
 const {
   updateNutBusterUses,
 } = require("../../../backend/firestore/utility/update_nutBuster_uses");
+const useItem = require("../../helper/items/use_item");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("jerkme")
     .setDescription("🧑 Check the stat sheet! 😊"),
+
   async execute(interaction) {
     const user = interaction.user;
     let userData = await getUser(user);
@@ -80,7 +78,8 @@ module.exports = {
     });
 
     if (!backpackText) backpackText = "Broke ahh 😔";
-    if (!upgradesText) upgradesText = "You lookin hella normal right now bro 🤓"
+    if (!upgradesText)
+      upgradesText = "You lookin hella normal right now bro 🤓";
 
     const statsEmbed = new EmbedBuilder()
       .setTitle("🥩 My Stuff 🧱")
@@ -224,12 +223,12 @@ module.exports = {
         if (
           !userData.items.backpack?.nut_buster.lastClean ||
           timePassed >
-          userData.items.backpack?.nut_buster.levelStats.cleanTimer[
-            userData.items.backpack?.nut_buster.level - 1
-          ] *
-            60 *
-            60 *
-            1000
+            userData.items.backpack?.nut_buster.levelStats.cleanTimer[
+              userData.items.backpack?.nut_buster.level - 1
+            ] *
+              60 *
+              60 *
+              1000
         ) {
           await updateItemTimer(user, "items.backpack.nut_buster.lastClean");
           await updateNut(user, -300);
@@ -253,8 +252,9 @@ module.exports = {
             components: [],
           });
         } else {
-          const cleanBuster = new EmbedBuilder()
-            .setTitle("🔦 Your Nut Buster is already out for a deep clean! 🧹");
+          const cleanBuster = new EmbedBuilder().setTitle(
+            "🔦 Your Nut Buster is already out for a deep clean! 🧹"
+          );
 
           buttonCollector.stop("Button Clicked");
 

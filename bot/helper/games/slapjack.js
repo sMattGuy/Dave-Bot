@@ -5,17 +5,43 @@ const { ButtonStyle } = require('discord.js');
 
 exports.playSlapjack = async (int) => {
     let user = int.user;
-    let opp = int.options.getUser('opponent')
-    let betAmt = int.options.getNumber('bet')
+    let opp = int.options.getUser('opponent');
+    let betAmt = int.options.getNumber('bet');
 
     const userData = await getUser(user);
-    const oppData = await getUser(opp);
+    const oppData = await getUser(opp, true);
 
-    // need a wager check to make sure both players have enough
+    if (!oppData) {
+        const noUserEmbed = new EmbedBuilder()
+            .setTitle('That player does not exist!')
+
+        return await int.reply({
+            embeds: [ noUserEmbed ],
+            ephemeral: true
+        });
+    }
+
+    // wager check
+    let tooBroke = '';
+    if (userData.stats.nut < betAmt) tooBroke = 'p1';
+    else if (oppData.stats.nut < betAmt) tooBroke = 'p2';
+    if (tooBroke) {
+        const brokeEmbed = new EmbedBuilder()
+        .setTitle(`${tooBroke === 'p1'
+            ? "You can't afford that wager! Broke ahh!"
+            : tooBroke === 'p2'
+            ? `${oppData.username} can't afford that wager!`
+            : 'Try something else.'
+        }`);
+
+        return await int.reply({
+            embeds: [ brokeEmbed ],
+            ephemeral: true
+        });
+    }
 
     const startEmbed = new EmbedBuilder()
-        .setTitle(`${userData.username} has challenged ${oppData.username} to Slapjack!
-        \nWager: 💦 ${betAmt}`)
+        .setTitle(`${userData.username} has challenged ${oppData.username} to Slapjack!\nWager: 💦 ${betAmt}`)
 
     const acceptButton = new ButtonBuilder()
         .setCustomId('accept')
@@ -58,10 +84,7 @@ exports.playSlapjack = async (int) => {
                 embeds: [ acceptEmbed ],
                 components: []
             });
-            // the below should be the rungame function
-            // make sure the rest is ephemeral for both players
-            int.channel.send({content: 'test p1', ephemeral: true});
-            i.channel.send({content: 'test p2', ephemeral: true});
+            await runGame([int, i])
         }
         else {
             await i.update({
@@ -85,8 +108,8 @@ exports.playSlapjack = async (int) => {
         }
         draw() {
             let cards = [...this.cards];
-            for (let i = 0; i < used.length; i++) {
-                const removeIndex = cards.findIndex(card => card.value == used[i].value && card.suit == used[i].suit);
+            for (let i = 0; i < this.used.length; i++) {
+                const removeIndex = cards.findIndex(card => card.value == this.used[i].value && card.suit == this.used[i].suit);
                 cards.splice(removeIndex, 1);
             }
 
@@ -97,7 +120,7 @@ exports.playSlapjack = async (int) => {
     class Player {
         constructor(id, cards) {
             this.id = id;
-            this.cards = cards
+            this.cards = cards;
         }
         score() {
             let currScore = 0;
@@ -120,30 +143,50 @@ exports.playSlapjack = async (int) => {
 
     let firstRound = true;
 
-    let p1 = new Player(user.id);
+    /*let p1 = new Player(user.id);
     let p2 = new Player(opp.id);
     let p1Slap = true;
-    let p2Slap = true;
+    let p2Slap = true;*/
 
-    const runGame = async () => {
+    let suitIcons = {
+        spades: '♠️',
+        hearts: '♥️',
+        clubs: '♣️',
+        diamonds: '♦️'
+    }
+
+    const runGame = async (playersInt) => {
         const deck = new Deck()
+        const players = [];
 
         const gameEmbed = new EmbedBuilder()
             .setTitle('♠️ ♥️ Slapjack ♣️ ♦️')
 
         if (firstRound) {
-            p1 = new Player(user.id, [deck.draw(), deck.draw()]);
-            p2 = new Player(opp.id, [deck.draw(), deck.draw()]);
+            firstRound = false;
+            players.push(new Player(user.id, [deck.draw(), deck.draw()]));
+            players.push(new Player(opp.id, [deck.draw(), deck.draw()]))
 
-            const p1Embed = gameEmbed;
-            p1Embed.setDescription('HIT until bust or stay, SLAP their last face-up card away, or only STAY to prevent a slap.');
-            await int.editReply({
-                embeds: [ gameEmbed ]
-            });
-
-            const p2Embed = gameEmbed;
-            p2Embed.setDescription('HIT until bust or stay, SLAP their last face-up card away, or only STAY to prevent a slap.');
-            await opp
+            for (let i = 0; i < 2; i++) {
+                console.log(players[i])
+                let handFieldValue = '';
+                players[i].cards.forEach(card => {
+                    handFieldValue += `| ${card.value} ${suitIcons[card.suit]}`;
+                })
+                handFieldValue += '|'; //maybe make it so lines or only between cards not on outsides of string
+                const roundEmbed = gameEmbed;
+                    roundEmbed
+                        .setDescription('HIT until bust or stay, SLAP their last face-up card away, or only STAY to prevent a slap.')
+                        .setFields(
+                            { name: 'Hand:', value: `${handFieldValue}`} // make suits emojis
+                        )
+            
+                playersInt[i] = await playersInt[i].followUp({
+                    embeds: [ roundEmbed ],
+                    components: [],
+                    ephemeral: true
+                })
+            }
         }
     }
 

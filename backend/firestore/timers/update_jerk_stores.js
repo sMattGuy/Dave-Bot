@@ -13,13 +13,13 @@ const updateJerkStores = async () => {
             jerkMult: 1.03
         },
         foot1: {
-            max: 400,
-            jumpFrom: 385,
+            max: 300,
+            jumpFrom: 285,
             jerkMult: 1.035
         },
         foot2: {
-            max: 600,
-            jumpFrom: 575,
+            max: 400,
+            jumpFrom: 380,
             jerkMult: 1.04
         }
     }

@@ -30,6 +30,12 @@ module.exports = {
     //console.log(itemsData);
 
     let genFields = (data) => {
+      userData.ballsMax = '200';
+      if (Object.keys(userData.items.upgrades).includes('left_foot_storage'))
+        userData.ballsMax = '300';
+      if (Object.keys(userData.items.upgrades).includes('right_foot_storage'))
+        userData.ballsMax = '400';
+
       return [{
         name: "Nut Bricks",
         value: `🧱 ${data.stats.nutBricks}`,
@@ -51,11 +57,6 @@ module.exports = {
       { name: "Nutgrades", value: `${upgradesText}`, inline: true }
     ]}
     let statsDesc = ""; //`Nut Blocks: ${userData.stats.nutBlocks} 💦🧱\nNut: ${userData.stats.nut} 💦\nBalls: ${userData.stats.jerkStores}/200 💦`;
-    userData.ballsMax = '200';
-    if (Object.keys(userData.items.upgrades).includes('left_foot_storage'))
-      userData.ballsMax = '400';
-    if (userData.items?.foot_storage === 2)
-      userData.ballsMax = '600';
     statsDesc +=
       "Clippy says: If you store more nut in the balls, you generate more nut more faster!";
 

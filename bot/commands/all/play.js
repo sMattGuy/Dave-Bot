@@ -3,6 +3,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const getUsers = require('../../../backend/firestore/main/getUsers');
 const { playTopTimer } = require('../../helper/games/toptimer');
 const playJizzle = require('../../helper/games/farkle');
+const { playSlapjack } = require('../../helper/games/slapjack');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -19,21 +20,26 @@ module.exports = {
             .addNumberOption(option =>
                 option.setName('bet')
                     .setDescription('How much you wanna wager?')
-                    .setRequired(false)),
-                    ),
+                    .setRequired(true)),
+                    )
+        /*.addSubcommand((subcommand) =>
+            subcommand
+            .setName("slapjack")
+            .setDescription("Slap it and jack it!")
+            .addUserOption(option => 
+                option.setName('opponent')
+                    .setDescription("Who's the lucky lady?")
+                    .setRequired(true)
+                    )
+            .addNumberOption(option =>
+                option.setName('bet')
+                    .setDescription('How much you wanna wager?')
+                    .setRequired(true)),
+                    )*/,
+        
     
 	async execute(interaction) {
         if (interaction.options.getSubcommand() === 'jizzle') return await playJizzle(interaction);
-        /*switch (interaction.options.getSubcommand()) {
-            case 'toptimer':
-                await playTopTimer(interaction);
-                break;
-            case 'jizzle':
-                await playJizzle(interaction);
-                break;
-        
-            default:
-                break;
-        }*/
+        else if (interaction.options.getSubcommand() === 'slapjack') return await playSlapjack(interaction);
 	},
 };

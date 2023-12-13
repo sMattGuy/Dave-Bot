@@ -21,7 +21,7 @@ module.exports = {
     .setName("shop")
     .setDescription("Purchase items from the merchant!"),
   async execute(interaction) {
-    const user = await getUser(interaction.user);
+    let user = await getUser(interaction.user);
     const itemsData = await getItems();
     const merchantData = await getMerchant();
     const timersData = await getTimers();
@@ -92,6 +92,7 @@ module.exports = {
     });
 
     shopCollector.on('collect', async (i) => {
+      user = await getUser(interaction.user);
       if (!i?.values?.[0] && i.customId === 'leave') {
         shopEmbed
           .setTitle('~ Merchant ~')

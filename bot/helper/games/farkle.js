@@ -224,7 +224,7 @@ const playJizzle = async (interaction) => {
         .setFields(jizzleFields);
         
 
-      i.update({
+      await i.update({
         embeds: [jizzleEmbed],
         components: [keepRow1, keepRow2, rollRow],
       });

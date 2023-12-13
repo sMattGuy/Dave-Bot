@@ -29,6 +29,9 @@ module.exports = {
     //const itemsData = await getItems();
     //console.log(itemsData);
 
+    // nut buster clean cost
+    const cleanCost = 400;
+
     let genFields = (data) => {
       userData.ballsMax = '200';
       if (Object.keys(userData.items.upgrades).includes('left_foot_storage'))
@@ -127,7 +130,7 @@ module.exports = {
       .setStyle(ButtonStyle.Primary)
       .setDisabled(true);
 
-    if (Object.keys(userData.items.backpack).includes("nut_buster")) {
+    if (Object.keys(userData.items.backpack).includes("nut_buster") && userData.stats.nut - cleanCost >= 0) {
       cleanBusterButton.setDisabled(false);
     }
 
@@ -193,9 +196,9 @@ module.exports = {
 
         buttonCollector.stop("Button Clicked");
       } else if (choice === "cleanBuster") {
-        if (userData.stats.nut - 300 < 0) {
+        if (userData.stats.nut - cleanCost < 0) {
           const cleanBuster = new EmbedBuilder().setTitle(
-            "🔦 You need 300 💦 to clean your Nut Buster! ❌💦"
+            `🔦 You need ${cleanCost} 💦 to clean your Nut Buster! ❌💦`
           );
 
           buttonCollector.stop("Button Clicked");
@@ -220,7 +223,7 @@ module.exports = {
               1000
         ) {
           await updateItemTimer(user, "items.backpack.nut_buster.lastClean");
-          await updateNut(user, -300);
+          await updateNut(user, -cleanCost);
           await updateNutBusterUses(user, 4);
 
           const cleanBuster = new EmbedBuilder()

@@ -50,6 +50,7 @@ const playJizzle = async (interaction) => {
   let diceValues = [];
   let keptThisRound = false;
   let roll = 0;
+  let maxBet = 50;
 
   const dice = {
     d1: {
@@ -83,7 +84,7 @@ const playJizzle = async (interaction) => {
   if (currBet > 0) {
     const userData = await getUser(user);
     if (currBet > userData.stats.nut) currBet = userData.stats.nut;
-    if (currBet > 30) currBet = 30;
+    if (currBet > maxBet) currBet = maxBet;
     startDesc = `Bet: ${currBet}`;
   }
 
@@ -182,7 +183,7 @@ const playJizzle = async (interaction) => {
     currBet = Math.floor(parseInt(i.content));
     const userData = await getUser(user);
     if (currBet > userData.stats.nut) currBet = userData.stats.nut;
-    if (currBet > 30) currBet = 30;
+    if (currBet > maxBet) currBet = maxBet;
 
     jizzleEmbed
       .setTitle(`Jizzle! 🎲💦`)
@@ -423,7 +424,8 @@ const playJizzle = async (interaction) => {
       else {
       //if (tempI?.customId) return;
       secondGame = false;
-      //await updateNut(user, -currBet);
+      if (currBet < maxBet || currBet > maxBet) currBet = maxBet;
+      await updateNut(user, -currBet);
       const timeoutEmbed = new EmbedBuilder()
         .setTitle(`You took too long!\nSay goodbye to your hard earned ${currBet} 💦`)
 

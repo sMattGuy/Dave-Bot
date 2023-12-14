@@ -46,7 +46,7 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
 
   // wager check
   let tooBroke = "";
-  if (userData.stats.nut < betAmt) tooBroke = "p1";
+  if (userData.stats.nut < betAmt || betAmt < 0) tooBroke = "p1";
   else if (oppData.stats.nut < betAmt) tooBroke = "p2";
   if (tooBroke) {
     let brokeEmbed = new EmbedBuilder().setTitle(
@@ -139,7 +139,7 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
       userData = await getUser(user);
       oppData = await getUser(opp);
       let tooBroke = "";
-      if (userData.stats.nut < betAmt) tooBroke = "p1";
+      if (userData.stats.nut < betAmt || betAmt < 0) tooBroke = "p1";
       else if (oppData.stats.nut < betAmt) tooBroke = "p2";
       if (tooBroke) {
         const brokeEmbed = new EmbedBuilder().setTitle(

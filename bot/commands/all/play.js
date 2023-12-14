@@ -22,7 +22,7 @@ module.exports = {
                     .setDescription('How much you wanna wager?')
                     .setRequired(true)),
                     )
-        /*.addSubcommand((subcommand) =>
+        .addSubcommand((subcommand) =>
             subcommand
             .setName("slapjack")
             .setDescription("Slap it and jack it!")
@@ -35,7 +35,7 @@ module.exports = {
                 option.setName('bet')
                     .setDescription('How much you wanna wager?')
                     .setRequired(true)),
-                    )*/,
+                    ),
         
     
 	async execute(interaction) {

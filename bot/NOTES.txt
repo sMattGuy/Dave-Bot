@@ -33,12 +33,13 @@ jerk raid boss, randomlpy appears everyone has to jerk the boss or something for
 jerk disease, someone cant generate/loses nut until someone jerks them off, or maybe loss balls nut goes to the jerking player
 
 FIX SLAPJACK
-dm notification when challenged
+D dm notification when challenged
 say what other player did, ex: hit twice!, slapped your 2 spades!
-hitting over 21
-editing final message breaks
-make bets matter and check they have enough
+D? hitting over 21
+D? editing final message breaks
+D make bets matter and check they have enough
 rematches with bet changing through chat
-change final message depending on how many wins or maybe just leave it after first game
+D change final message depending on how many wins or maybe just leave it after first game
 show final hands in end embed nicely
 make win and loss embeds separate or maybe not idk??
+more emojis :cool emoji:

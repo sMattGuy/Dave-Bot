@@ -6,17 +6,31 @@ const {
 const cardsDeck = require("./slapjackDeck.json");
 const getUser = require("../../../backend/firestore/main/getUser");
 const { ButtonStyle, ActionRow } = require("discord.js");
+const { updateNut } = require("../../../backend/firestore/main/update_nut");
 
-exports.playSlapjack = async (int, rematch) => {
-  let user = int.user;
-  let opp = int.options.getUser("opponent");
-  let betAmt = int.options.getNumber("bet");
-  let msg;
+exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRematch, playersIntRematch) => {
+  let user;
+  let opp;
+  let betAmt;
+  let msgOG;
+  let notifyMsg;
+  let newPlayersInt = playersIntRematch || null;
 
-  const userData = await getUser(user);
-  const oppData = await getUser(opp, true);
+  if (rematch) {
+    user = userRematch;
+    opp = oppRematch;
+    betAmt = betAmtRematch;
+  }
+  else {
+    user = int.user;
+    opp = int.options.getUser("opponent");
+    betAmt = int.options.getNumber("bet");
+  }
 
-  if (!oppData) {
+  let userData = await getUser(user);
+  let oppData = await getUser(opp, true);
+
+  if (!oppData && !rematch) {
     const noUserEmbed = new EmbedBuilder().setTitle(
       "That player does not exist!"
     );
@@ -32,7 +46,7 @@ exports.playSlapjack = async (int, rematch) => {
   if (userData.stats.nut < betAmt) tooBroke = "p1";
   else if (oppData.stats.nut < betAmt) tooBroke = "p2";
   if (tooBroke) {
-    const brokeEmbed = new EmbedBuilder().setTitle(
+    let brokeEmbed = new EmbedBuilder().setTitle(
       `${
         tooBroke === "p1"
           ? "You can't afford that wager! Broke ahh!"
@@ -42,12 +56,30 @@ exports.playSlapjack = async (int, rematch) => {
       }`
     );
 
+    if (rematch) {
+      brokeEmbed.setTitle(
+        `🤔 Someone is too broke for that wager!\nStart a new Slapjack with a lower wager. 🤔`
+      );
+      for (let i = 0; i < 2; i++) {
+        return await newPlayersInt[i].editReply({
+          embeds: [ brokeEmbed ]
+        });
+      }
+      return;
+    }
+
     return await int.reply({
       embeds: [brokeEmbed],
       ephemeral: true,
     });
   }
 
+  if (rematch) {
+    await updateNut(user, -betAmt);
+    await updateNut(opp, -betAmt);
+    await runGame([newPlayersInt[0], newPlayersInt[1]]);
+  }
+  else {
   const startEmbed = new EmbedBuilder().setTitle(
     `${userData.username} has challenged ${oppData.username} to Slapjack!\nWager: 💦 ${betAmt}`
   );
@@ -67,32 +99,59 @@ exports.playSlapjack = async (int, rematch) => {
     declineButton
   );
 
-  msg = await int.reply({
+  msgOG = await int.reply({
     embeds: [startEmbed],
     components: [startMatchRow],
+  });
+
+  // challenge dm notification
+  const notifyEmbed = new EmbedBuilder()
+    .setTitle(`${userData.username} challenged you to Slapjack! Check the chat!`)
+
+  notifyMsg = await opp.send({
+    embeds: [ notifyEmbed ]
   });
 
   const startMatchFilter = (i) => {
     return i.user.id === opp.id;
   };
 
-  const startMatchCollector = msg.createMessageComponentCollector({
+  const startMatchCollector = msgOG.createMessageComponentCollector({
     filter: startMatchFilter,
     time: 30000,
   });
 
   startMatchCollector.on("collect", async (i) => {
     //await i.deferUpdate();
+    await notifyMsg.delete();
     const acceptEmbed = new EmbedBuilder()
       .setTitle("✋ Start slappin and jackin! 🃏")
       .setDescription(
-        `${userData.username} vs ${oppData.username} | Pot: ${betAmt * 2}`
+        `${userData.username} vs ${oppData.username} | Pot: 💦 ${betAmt * 2}`
       );
     const declineEmbed = new EmbedBuilder().setTitle(
       `😔 ${oppData.username} is a pussball! 😭`
     );
     if (i.customId === "accept") {
-      msg = await i.update({
+      // wager check again
+      userData = await getUser(user);
+      oppData = await getUser(opp);
+      let tooBroke = "";
+      if (userData.stats.nut < betAmt) tooBroke = "p1";
+      else if (oppData.stats.nut < betAmt) tooBroke = "p2";
+      if (tooBroke) {
+        const brokeEmbed = new EmbedBuilder().setTitle(
+          `🤔 Someone is too broke for that wager! 🤔`
+        );
+    
+        startMatchCollector.stop("collected");
+        return await i.update({
+          embeds: [brokeEmbed]
+        });
+      }
+      await updateNut(user, -betAmt);
+      await updateNut(opp, -betAmt);
+      msgOG = await i.update({
         embeds: [acceptEmbed],
         components: [],
       });
@@ -112,6 +171,7 @@ exports.playSlapjack = async (int, rematch) => {
       `😔 ${oppData.username} didn't respond! 😕`
     );
   });
+}
 
   class Deck {
     constructor(used) {
@@ -181,9 +241,11 @@ exports.playSlapjack = async (int, rematch) => {
   let turn = 0;
   let activeInt;
   let canSlap = true;
-  let stayCount = 0;
+  let passCount = 0;
   let canHit = true;
   let slapped = [false, false];
+  let didHit = false;
+  let lastMove = '';
 
   let deck = new Deck();
   let players = [];
@@ -191,9 +253,11 @@ exports.playSlapjack = async (int, rematch) => {
   deck = new Deck(players[0].cards);
   players.push(new Player(opp.id, [deck.draw(), deck.draw()]));
 
-  const endGame = async (playersInt) => {
+  let rematchAccept = 0;
+  const endGame = async (playersInt, timeout) => {
     const checkWin = () => {
-      if (players[0].score() > 21 && players[1].score() > 21) {
+      if (timeout) return 'TEST';
+      else if (players[0].score() > 21 && players[1].score() > 21) {
         return {
           type: 'push',
           reason: 'You both busted! 💦',
@@ -241,10 +305,22 @@ exports.playSlapjack = async (int, rematch) => {
           loserData: userData,
         }
       }
-      else winner = 'ERROR';
+      else return 'ERROR';
     }
 
     const endResult = checkWin();
+
+    if (endResult === 'TEST') {
+      console.log('timeout');
+      return;
+    }
+    if (endResult?.type === 'push') {
+      await updateNut(user, betAmt);
+      await updateNut(opp, betAmt);
+    }
+    else {
+      await updateNut(endResult.winnerData, betAmt * 2);
+    }
 
     const rematchButton = new ButtonBuilder()
       .setCustomId('rematch')
@@ -255,73 +331,184 @@ exports.playSlapjack = async (int, rematch) => {
     const rematchRow = new ActionRowBuilder()
       .addComponents(rematchButton);
 
-    /*const endFields = {
-      winner: [{
-        name: `Their Hand (${i === 0 ? players[1].score(true) : players[0].score(true)}?)`,
-        value: `${
-          i === 0 ? getHandString(players[1], true) : getHandString(players[0], true)
-        }`,
-      },
-      {
-        name: `Your Hand (${players[i].score()})`,
-        value: `${
-          i === 0 ? getHandString(players[0]) : getHandString(players[1])
-        }`,
-      }],
-      loser: [{
-        name: `Their Hand (${i === 0 ? players[1].score(true) : players[0].score(true)}?)`,
-        value: `${
-          i === 0 ? getHandString(players[1], true) : getHandString(players[0], true)
-        }`,
-      },
-      {
-        name: `Your Hand (${players[i].score()})`,
-        value: `${
-          i === 0 ? getHandString(players[0]) : getHandString(players[1])
-        }`,
-      }],
-    };*/
+    const getEndHandString = (player) => {
+        let handFieldValue = "";
+        let handCount = player.cards.length;
+        player.cards.forEach((card) => {
+          handCount--;
+          handFieldValue += `${card.value} ${suitIcons[card.suit]}`;
+          if (handCount !== 0) handFieldValue += " | ";
+        });
+        return handFieldValue;
+      };
+
+    let endFields;
+    if (endResult.type === 'push') {
+      endFields = [
+        {
+          name: `${userData.username}'s Hand (${players[0].score()})`,
+          value: `${
+            getEndHandString(players[0])
+          }`,
+        },
+        {
+          name: `${oppData.username}'s Hand (${players[1].score()})`,
+          value: `${
+            getEndHandString(players[1])
+          }`,
+        }
+      ]
+    }
+    else if (endResult.type === 'win') {
+      const winPlayer = user.id === endResult.winnerData.id ? players[0] : players[1];
+      const losePlayer = user.id === winPlayer.id ? players[1] : players[0];
+      endFields = [
+        {
+          name: `${endResult.winnerData.username}'s Hand (${winPlayer.score()})`,
+          value: `${
+            getEndHandString(winPlayer)
+          }`,
+        },
+        {
+          name: `${endResult.loserData.username}'s Hand (${losePlayer.score()})`,
+          value: `${
+            getEndHandString(losePlayer)
+          }`,
+        }
+      ]
+    }
+
 
     const tieEmbed = new EmbedBuilder()
       .setTitle('♠️ ♥️ Slapjack ♣️ ♦️')
-      .setDescription(`${endResult.reason}\nAll wagers were refunded!`)
+      .setDescription(`${endResult.reason}\nAll wagers were refunded!`);
 
     const endEmbed = new EmbedBuilder()
       .setTitle(`${endResult.winnerData.username} slapped ${endResult.loserData.username} to death! ✋`)
+      .setFields(endFields);
 
     /*const loserEmbed = new EmbedBuilder()
       .setTitle(`Your ass got slapped up by ${endResult.winnerData.username}! ✋`)
       .setDescription(`You won test cum!`)*/
 
+    const rematchInt = [];
     playersInt.forEach(async i => {
+      let endInt;
       if (endResult.type === 'push') {
-        await i.edit({ 
+        endInt = await i.edit({ 
           embeds: [ tieEmbed ],
           components: [ rematchRow ]
          });
       }
       else {
-        endEmbed.setDescription(`${endResult.winnerData.username} wins ${betAmt * 2}`)
-        await i.edit({ 
+        endEmbed.setDescription(`${endResult.winnerData.username} won 💦 ${betAmt * 2}`)
+        endInt = await i.edit({ 
           embeds: [ endEmbed ],
           components: [ rematchRow ]
          });
       }
+      rematchInt.push(endInt);
     });
     if (endResult.type === 'push') {
-      msg = await msg.editReply({
-        embeds: [ endEmbed ]
-      });
-    }
-    else {
-      msg = await msg.editReply({
+      msgOG = await msgOG.edit({
         embeds: [ tieEmbed ]
       });
     }
-  }
+    else {
+      msgOG = await msgOG.edit({
+        embeds: [ endEmbed ]
+      });
+    }
+
+    const waitingRematchEmbed = new EmbedBuilder()
+      .setTitle('Waiting for other player...')
+
+    const timeoutRematchEmbed = new EmbedBuilder()
+      .setTitle('Thanks for playing! 💦 😊')
+
+      // first collector
+      const checkId1 = user.id;
+
+      const rematchFilter1 = a => {
+        return a.user.id === checkId1;
+      }
+
+      const rematchCollector1 = rematchInt[0].createMessageComponentCollector({
+        filter: rematchFilter1,
+        time: 40000
+      })
+
+    rematchCollector1.on('collect', async (i) => {
+      console.log('here')
+      rematchAccept++;
+      if (rematchAccept === 2) {
+        rematchCollector1.stop('accepted');
+        return await this.playSlapjack(null, true, user, opp, betAmt, newPlayersInt);
+      }
+      rematchButton.setDisabled(true);
+      rematchInt[0] = await i.update({
+        embeds: [ waitingRematchEmbed ],
+        components: [ rematchRow ]
+      });
+      rematchCollector1.stop('accepted');
+    });
+
+  rematchCollector1.on('end', async (collected, reason) => {
+    console.log('erm')
+    /*if (reason !== 'accepted') {
+      await i.update({
+        embeds: [ timeoutRematchEmbed ],
+        components: []
+      });
+    }*/
+  });
+
+        // first collector
+        const checkId2 = opp.id;
+
+        const rematchFilter2 = a => {
+          return a.user.id === checkId2;
+        }
+  
+        const rematchCollector2 = rematchInt[1].createMessageComponentCollector({
+          filter: rematchFilter2,
+          time: 40000
+        })
+  
+      rematchCollector2.on('collect', async (i) => {
+        console.log('here')
+        rematchAccept++;
+        if (rematchAccept === 2) {
+          rematchCollector2.stop('accepted');
+          return await this.playSlapjack(null, true, user, opp, betAmt, newPlayersInt);
+        }
+        rematchButton.setDisabled(true);
+        rematchInt[1] = await i.update({
+          embeds: [ waitingRematchEmbed ],
+          components: [ rematchRow ]
+        });
+        rematchCollector2.stop('accepted');
+      });
+  
+    rematchCollector2.on('end', async (collected, reason) => {
+      console.log('erm')
+      /*if (reason !== 'accepted') {
+        await i.update({
+          embeds: [ timeoutRematchEmbed ],
+          components: []
+        });
+      }*/
+    });
+}
 
   const runGame = async (playersInt) => {
-    if (stayCount === 2) return endGame(playersInt);
+    canHit = true;
+    if (passCount === 2) return endGame(playersInt);
+    // decide if player can hit
+    /*const aces = 0;
+    players[turn].cards.forEach(card => {
+      if (card.value == 'A') aces++;
+    })*/
     if (players[turn].score() >= 21) canHit = false;
     if (turn === 0 && players[1].cards.length === 1) canSlap === false;
     else if (turn === 1 && players[0].cards.length === 1) canSlap === false;
@@ -332,23 +519,33 @@ exports.playSlapjack = async (int, rematch) => {
     const hitButton = new ButtonBuilder()
         .setCustomId('hit')
         .setLabel('HIT')
-        .setStyle(ButtonStyle.Primary)
+        .setStyle(ButtonStyle.Success)
     
     const stayButton = new ButtonBuilder()
         .setCustomId('stay')
         .setLabel('STAY')
-        .setStyle(ButtonStyle.Primary)
+        .setStyle(ButtonStyle.Success)
 
     const slapButton = new ButtonBuilder()
         .setCustomId('slap')
         .setLabel('SLAP')
-        .setStyle(ButtonStyle.Primary)
+        .setStyle(ButtonStyle.Danger)
+
+    const passButton = new ButtonBuilder()
+        .setCustomId('pass')
+        .setLabel('PASS')
+        .setStyle(ButtonStyle.Danger)
 
     const optionsRow = new ActionRowBuilder()
         .addComponents(
             hitButton,
             stayButton,
-            slapButton
+        )
+
+    const optionsRow2 = new ActionRowBuilder()
+        .addComponents(
+            slapButton,
+            passButton
         )
 
     const getHandString = (player, hideCard) => {
@@ -367,14 +564,10 @@ exports.playSlapjack = async (int, rematch) => {
 
     for (let i = 0; i < 2; i++) {
       hitButton.setDisabled(!canHit);
-      stayButton.setDisabled(false);
+      stayButton.setDisabled(!didHit);
       slapButton.setDisabled(!canSlap || slapped[i]);
-      canHit = true;
-      if (turn !== i) {
-        hitButton.setDisabled(true);
-        stayButton.setDisabled(true);
-        slapButton.setDisabled(true);
-      }
+      passButton.setDisabled(didHit);
+
       const roundEmbed = gameEmbed;
 
       // set their hand display to a number and a '?' or just a '?'
@@ -394,11 +587,25 @@ exports.playSlapjack = async (int, rematch) => {
             i === 0 ? getHandString(players[0]) : getHandString(players[1])
           }`,
         }];
-        console.log(stayCount)
-        let roundDesc = `${!canHit ? `You can only STAY or you will bust!\nTip: Don't STAY too fast or they will know.` : `You can HIT${stayCount === 1 ? ' or STAY' : ', STAY, or SLAP'}`}`;
+
+        let roundDesc = '';
+        switch (lastMove) {
+          case 'stay':
+            roundDesc = 'They hit and stayed!'
+            break;
+          case 'slap':
+              roundDesc = 'They slapped your last card!'
+              break;
+          case 'pass':
+              roundDesc = "They passed! If you pass it's game over."
+              break;
+          default:
+            roundDesc = 'HIT until bust or STAY, SLAP their last face-up card away, or PASS to prevent a slap.'
+              break;
+        }
 
         if (firstRound) { // this one only for desc
-            roundDesc = 'HIT until bust or stay, SLAP their last face-up card away, or only STAY to prevent a slap.';
+            roundDesc = 'HIT until bust or STAY, SLAP their last face-up card away, or PASS to prevent a slap.';
           }
 
       if (i !== turn) {
@@ -408,6 +615,7 @@ exports.playSlapjack = async (int, rematch) => {
           hitButton.setDisabled(true);
           stayButton.setDisabled(true);
           slapButton.setDisabled(true);
+          passButton.setDisabled(true);
       }
 
       roundEmbed
@@ -427,7 +635,7 @@ exports.playSlapjack = async (int, rematch) => {
         //playersInt[i] = await playersInt[i].followUp({
         playersInt[i] = await playersInt[i].user.send({
           embeds: [ roundEmbed ],
-          components: [ optionsRow ],
+          components: [ optionsRow, optionsRow2 ],
           //ephemeral: true,
         });
       }
@@ -435,7 +643,7 @@ exports.playSlapjack = async (int, rematch) => {
         //playersInt[i] = await playersInt[i].editReply({
         playersInt[i] = await playersInt[i].edit({
           embeds: [ roundEmbed ],
-          components: [ optionsRow ],
+          components: [ optionsRow, optionsRow2 ],
           //ephemeral: true,
         });
       }
@@ -460,13 +668,13 @@ exports.playSlapjack = async (int, rematch) => {
         if (choice === 'hit') {
           didHit = true;
           canSlap = false;
-          stayCount = 0;
+          passCount = 0;
           players[turn] = new Player(players[turn].id, [...players[turn].cards, deck.draw()])
           await runGame(playersInt);
         }
         else if (choice === 'stay') {
-          if (!canSlap && didHit) stayCount = 0; // if hit, does not count as stay
-          else stayCount++;
+          lastMove = 'stay';
+          if (!canSlap && didHit) passCount = 0; // if hit, does not count as stay
           slapped[turn] = false;
           didHit = false;
           canSlap = true;
@@ -474,13 +682,20 @@ exports.playSlapjack = async (int, rematch) => {
           await runGame(playersInt);
         }
         else if (choice === 'slap') {
+          lastMove = 'slap';
           slapped[turn] = true;
-          stayCount = 0;
+          passCount = 0;
           turn = turn === 0 ? 1 : 0;
           const newHand = [...players[turn].cards];
           newHand.pop();
-          console.log(newHand)
           players[turn] = new Player(players[turn].id, newHand);
+          await runGame(playersInt);
+        }
+        else if (choice === 'pass') {
+          lastMove = 'pass';
+          passCount++;
+          canSlap = false;
+          turn = turn === 0 ? 1 : 0;
           await runGame(playersInt);
         }
     });

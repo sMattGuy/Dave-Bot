@@ -423,7 +423,7 @@ const playJizzle = async (interaction) => {
       else {
       //if (tempI?.customId) return;
       secondGame = false;
-      await updateNut(user, -currBet);
+      //await updateNut(user, -currBet);
       const timeoutEmbed = new EmbedBuilder()
         .setTitle(`You took too long!\nSay goodbye to your hard earned ${currBet} 💦`)
 

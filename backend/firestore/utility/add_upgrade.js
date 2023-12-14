@@ -4,11 +4,10 @@ const { db } = require("../../db")
 exports.addUpgrade = async (user, itemId, itemData, currency) => {
     const userRef = doc(db, 'users', user.id);
     const userSnap = await getDoc(userRef);
-    console.log(user.id)
-    console.log(itemId)
+    console.log(`${user.id} purchased upgrade: itemId`);
+
     const upgrades = userSnap.data().items.upgrades;
     upgrades[itemId] = itemData;
-    console.log(upgrades)
 
     try {
         await updateDoc(userRef, {

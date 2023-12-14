@@ -8,18 +8,21 @@ const getUser = require("../../../backend/firestore/main/getUser");
 const { ButtonStyle, ActionRow } = require("discord.js");
 const { updateNut } = require("../../../backend/firestore/main/update_nut");
 
-exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRematch, playersIntRematch) => {
+exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRematch, playersIntRematch, newMsgOG, newRematchCount) => {
   let user;
   let opp;
   let betAmt;
   let msgOG;
   let notifyMsg;
   let newPlayersInt = playersIntRematch || null;
+  let rematchCount = 0;
 
   if (rematch) {
     user = userRematch;
     opp = oppRematch;
     betAmt = betAmtRematch;
+    rematchCount = newRematchCount;
+    msgOG = newMsgOG
   }
   else {
     user = int.user;
@@ -61,7 +64,7 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
         `🤔 Someone is too broke for that wager!\nStart a new Slapjack with a lower wager. 🤔`
       );
       for (let i = 0; i < 2; i++) {
-        return await newPlayersInt[i].editReply({
+        return await newPlayersInt[i].edit({
           embeds: [ brokeEmbed ]
         });
       }
@@ -77,7 +80,6 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
   if (rematch) {
     await updateNut(user, -betAmt);
     await updateNut(opp, -betAmt);
-    await runGame([newPlayersInt[0], newPlayersInt[1]]);
   }
   else {
   const startEmbed = new EmbedBuilder().setTitle(
@@ -238,7 +240,7 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
   };
 
   let firstRound = true;
-  let turn = 0;
+  let turn = 0;//rematchCount % 2;
   let activeInt;
   let canSlap = true;
   let passCount = 0;
@@ -326,7 +328,7 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
       .setCustomId('rematch')
       .setLabel('Rematch')
       .setStyle(ButtonStyle.Success)
-      .setDisabled(true);
+      .setDisabled(false);
 
     const rematchRow = new ActionRowBuilder()
       .addComponents(rematchButton);
@@ -392,23 +394,45 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
       .setDescription(`You won test cum!`)*/
 
     const rematchInt = [];
-    playersInt.forEach(async i => {
+    let firstRematchSent = false;
+    for (let i = 0; i < 2; i++) {
       let endInt;
       if (endResult.type === 'push') {
-        endInt = await i.edit({ 
-          embeds: [ tieEmbed ],
-          components: [ rematchRow ]
-         });
+        if (!firstRematchSent) {
+          firstRematchSent = true;
+          endInt = await playersInt[i].edit({ 
+            embeds: [ tieEmbed ],
+            components: [ rematchRow ]
+           });
+           rematchInt.push(endInt);
+        }
+        else {
+          endInt = await playersInt[i].edit({ 
+            embeds: [ tieEmbed ],
+            components: []
+           });
+           rematchInt.push(endInt);
+        }
       }
       else {
         endEmbed.setDescription(`${endResult.winnerData.username} won 💦 ${betAmt * 2}`)
-        endInt = await i.edit({ 
-          embeds: [ endEmbed ],
-          components: [ rematchRow ]
-         });
+        if (!firstRematchSent) {
+          firstRematchSent = true;
+          endInt = await playersInt[i].edit({ 
+            embeds: [ endEmbed ],
+            components: [ rematchRow ]
+           });
+           rematchInt.push(endInt);
+        }
+        else {
+          endInt = await playersInt[i].edit({ 
+            embeds: [ endEmbed ],
+            components: []
+           });
+           rematchInt.push(endInt);
+        }
       }
-      rematchInt.push(endInt);
-    });
+    };
     if (endResult.type === 'push') {
       msgOG = await msgOG.edit({
         embeds: [ tieEmbed ]
@@ -427,77 +451,51 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
       .setTitle('Thanks for playing! 💦 😊')
 
       // first collector
-      const checkId1 = user.id;
+      let checkId = user.id;
 
-      const rematchFilter1 = a => {
-        return a.user.id === checkId1;
+      let rematchFilter = (a) => {
+        return a.user.id === checkId;
       }
 
-      const rematchCollector1 = rematchInt[0].createMessageComponentCollector({
-        filter: rematchFilter1,
+      let rematchCollector = rematchInt[0].createMessageComponentCollector({
+        filter: rematchFilter,
         time: 40000
-      })
+      });
 
-    rematchCollector1.on('collect', async (i) => {
-      console.log('here')
+    rematchCollector.on('collect', async (i) => {
       rematchAccept++;
-      if (rematchAccept === 2) {
-        rematchCollector1.stop('accepted');
-        return await this.playSlapjack(null, true, user, opp, betAmt, newPlayersInt);
-      }
-      rematchButton.setDisabled(true);
-      rematchInt[0] = await i.update({
-        embeds: [ waitingRematchEmbed ],
-        components: [ rematchRow ]
-      });
-      rematchCollector1.stop('accepted');
-    });
-
-  rematchCollector1.on('end', async (collected, reason) => {
-    console.log('erm')
-    /*if (reason !== 'accepted') {
-      await i.update({
-        embeds: [ timeoutRematchEmbed ],
-        components: []
-      });
-    }*/
-  });
-
-        // first collector
-        const checkId2 = opp.id;
-
-        const rematchFilter2 = a => {
-          return a.user.id === checkId2;
-        }
-  
-        const rematchCollector2 = rematchInt[1].createMessageComponentCollector({
-          filter: rematchFilter2,
-          time: 40000
-        })
-  
-      rematchCollector2.on('collect', async (i) => {
-        console.log('here')
-        rematchAccept++;
-        if (rematchAccept === 2) {
-          rematchCollector2.stop('accepted');
-          return await this.playSlapjack(null, true, user, opp, betAmt, newPlayersInt);
-        }
+      if (rematchAccept === 1) {
         rematchButton.setDisabled(true);
-        rematchInt[1] = await i.update({
+        rematchInt[0] = await i.update({
           embeds: [ waitingRematchEmbed ],
           components: [ rematchRow ]
         });
-        rematchCollector2.stop('accepted');
-      });
-  
-    rematchCollector2.on('end', async (collected, reason) => {
-      console.log('erm')
-      /*if (reason !== 'accepted') {
-        await i.update({
-          embeds: [ timeoutRematchEmbed ],
-          components: []
+        rematchButton.setDisabled(false);
+        rematchInt[1] = await playersInt[1].edit({
+          components: [ rematchRow ]
         });
-      }*/
+        await rematchCollector.stop('accepted');
+      // second collector
+      const checkId = opp.id;
+
+      const rematchFilter = a => {
+        return a.user.id === checkId;
+      }
+
+      rematchCollector = rematchInt[1].createMessageComponentCollector({
+        filter: rematchFilter,
+        time: 40000
+      })
+
+    rematchCollector.on('collect', async (i) => {
+      rematchCollector.stop('accepted');
+      rematchInt[1] = await i.update({
+        embeds: [ waitingRematchEmbed ],
+        components: []
+      });
+      return await this.playSlapjack(null, true, user, opp, betAmt, rematchInt, msgOG ,rematchCount++);
+    });
+      }
     });
 }
 
@@ -633,11 +631,21 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
           ephemeral: true
         });*/
         //playersInt[i] = await playersInt[i].followUp({
-        playersInt[i] = await playersInt[i].user.send({
-          embeds: [ roundEmbed ],
-          components: [ optionsRow, optionsRow2 ],
-          //ephemeral: true,
-        });
+        if (rematch) {
+          playersInt[i] = await playersInt[i].edit({
+            embeds: [ roundEmbed ],
+            components: [ optionsRow, optionsRow2 ],
+            //ephemeral: true,
+          });
+        }
+        else {
+          playersInt[i] = await playersInt[i].user.send({
+            embeds: [ roundEmbed ],
+            components: [ optionsRow, optionsRow2 ],
+            //ephemeral: true,
+          });
+        }
+
       }
       else {
         //playersInt[i] = await playersInt[i].editReply({
@@ -700,6 +708,5 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
         }
     });
   };
-
-  //await runGame();
+  if (rematch) await runGame([newPlayersInt[0], newPlayersInt[1]]);
 };

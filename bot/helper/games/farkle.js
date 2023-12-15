@@ -50,7 +50,7 @@ const playJizzle = async (interaction) => {
   let diceValues = [];
   let keptThisRound = false;
   let roll = 0;
-  let maxBet = 50;
+  let maxBet = 40;
 
   const dice = {
     d1: {
@@ -79,14 +79,15 @@ const playJizzle = async (interaction) => {
     },
   };
 
-  let startDesc = 'Bet: Send your nut bet below!';
+  let startDesc = '';//'Bet: Send your nut bet below!';
   currBet = interaction.options.getNumber('bet') || 0;
-  if (currBet > 0) {
+  if (currBet < 0) currBet = 0;
+  //if (currBet > 0) {
     const userData = await getUser(user);
     if (currBet > userData.stats.nut) currBet = userData.stats.nut;
     if (currBet > maxBet) currBet = maxBet;
     startDesc = `Bet: ${currBet}`;
-  }
+  //}
 
   const jizzleEmbed = new EmbedBuilder()
     .setTitle(`Jizzle! 🎲💦`)
@@ -176,10 +177,13 @@ const playJizzle = async (interaction) => {
   });
 
   jizzleBetCollector.on("collect", async (i) => {
+    return;
     if (currBet > 0) {
       jizzleBetCollector.stop();
+
       return;
     }
+    //if (currBet < 0) currBet = 0;
     currBet = Math.floor(parseInt(i.content));
     const userData = await getUser(user);
     if (currBet > userData.stats.nut) currBet = userData.stats.nut;
@@ -364,12 +368,12 @@ const playJizzle = async (interaction) => {
           if (score >= gameData.jizzle5xScore) winAmt = currBet * 5;
           const userUpdated = await updateNut(user, winAmt - currBet);
           await updateJizzleTracker(true);
-          newGameTitle = `You won ${winAmt} 💦\nFinal Score: ${score}${score >= gameData.jizzle5xScore ? ' (x5 Payout)' : ''}\nCurrent Nut Stored: ${userUpdated.stats.nut} 💦`;
+          newGameTitle = `You won ${winAmt} 💦\nFinal Score: ${score}/${gameData.jizzleBeatScore} ${score >= gameData.jizzle5xScore ? ' (x5 Payout)' : ''}\nCurrent Nut Stored: ${userUpdated.stats.nut} 💦`;
         }
         else {
           const userUpdated = await updateNut(user, -currBet);
           await updateJizzleTracker(false);
-          newGameTitle = `You lost ${currBet} 💦\nFinal Score: ${score}\nCurrent Nut Stored: ${userUpdated.stats.nut} 💦`
+          newGameTitle = `You lost ${currBet} 💦\nFinal Score: ${score}/${gameData.jizzleBeatScore}\nCurrent Nut Stored: ${userUpdated.stats.nut} 💦`
         }
 
         const newGameFilter = i => {
@@ -424,7 +428,7 @@ const playJizzle = async (interaction) => {
       else {
       //if (tempI?.customId) return;
       secondGame = false;
-      if (currBet < maxBet || currBet > maxBet) currBet = maxBet;
+      //if (currBet < maxBet || currBet > maxBet) currBet = maxBet;
       await updateNut(user, -currBet);
       const timeoutEmbed = new EmbedBuilder()
         .setTitle(`You took too long!\nSay goodbye to your hard earned ${currBet} 💦`)

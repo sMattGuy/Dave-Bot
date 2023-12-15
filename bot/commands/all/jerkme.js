@@ -17,6 +17,7 @@ const {
   updateNutBusterUses,
 } = require("../../../backend/firestore/utility/update_nutBuster_uses");
 const useItem = require("../../helper/items/use_item");
+const { updateWomanStatus } = require("../../../backend/firestore/utility/update_woman_status");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -31,6 +32,8 @@ module.exports = {
 
     // nut buster clean cost
     const cleanCost = 400;
+    // woman hire cost
+    const hireWomanCost = 200;
 
     let genFields = (data) => {
       userData.ballsMax = '200';
@@ -60,8 +63,14 @@ module.exports = {
       { name: "Nutgrades", value: `${upgradesText}`, inline: true }
     ]}
     let statsDesc = ""; //`Nut Blocks: ${userData.stats.nutBlocks} 💦🧱\nNut: ${userData.stats.nut} 💦\nBalls: ${userData.stats.jerkStores}/200 💦`;
+    const statsDescOptions = [
+      "Clippy says: If you store more nut in the balls, you generate more nut more faster!",
+      "Clippy says: Bust some nut with the Nut Buster!",
+      "Clippy says: Remember, drink water!",
+      "Clippy says: Jerking off on discord is not the same as jerking off... unless?",
+    ]
     statsDesc +=
-      "Clippy says: If you store more nut in the balls, you generate more nut more faster!";
+      `${statsDescOptions[Math.floor(Math.random * statsDescOptions.length)]}`;
 
     //const shortInv = invCondenser(userData.items.backpack);
 
@@ -71,7 +80,7 @@ module.exports = {
     Object.keys(userData.items.upgrades).forEach((itemId) => {
       const item = userData.items.upgrades[itemId];
       upgradesText += `${item.name}\n${item.info}`;
-    })
+    });
 
     const itemSelect = new StringSelectMenuBuilder()
       .setCustomId("item")
@@ -82,7 +91,7 @@ module.exports = {
     Object.keys(userData.items.backpack).forEach((itemId) => {
       const item = userData.items.backpack[itemId];
       backpackText += `${
-        item?.quantity ? `Quantity: ${item?.quantity}` : `Uses: ${item.uses}`
+        item?.quantity ? `Quantity: ${item?.quantity}` : item?.uses ? `Uses: ${item.uses}` : `Hired: ${item.active ? 'Yes' : 'No'}`
       } | ${item.name}${
         item?.level
           ? ` | Level: ${item.level} / ${item.levelStats.maxLevel}`
@@ -95,7 +104,9 @@ module.exports = {
             `${
               item?.quantity
                 ? `Quantity: ${item.quantity}`
-                : `Uses: ${item.uses}`
+                : item?.uses
+                ? `Uses: ${item.uses}`
+                : `Hired: ${item.active ? 'Yes' : 'No'}`
             } | Type: ${
               item.type === "consumable"
                 ? "one-shot"
@@ -126,7 +137,7 @@ module.exports = {
 
     const cleanBusterButton = new ButtonBuilder()
       .setCustomId("cleanBuster")
-      .setLabel("🧰 Clean Nut Buster 🔦 [💦 300]")
+      .setLabel(`🧰 Clean Nut Buster 🔦 [💦 ${cleanCost}]`)
       .setStyle(ButtonStyle.Primary)
       .setDisabled(true);
 
@@ -134,9 +145,20 @@ module.exports = {
       cleanBusterButton.setDisabled(false);
     }
 
+    const hireWomanButton = new ButtonBuilder()
+      .setCustomId("hireWoman")
+      .setLabel(`🍆 Hire Escort 👩 [💦 ${hireWomanCost}]`)
+      .setStyle(ButtonStyle.Primary)
+      .setDisabled(true);
+
+      if (Object.keys(userData.items.backpack).includes("woman") && userData.stats.nut - hireWomanCost >= 0 && !userData.items.backpack.woman.active) {
+        hireWomanButton.setDisabled(false);
+      }
+
     const row2 = new ActionRowBuilder().addComponents(
       convertNutButton,
-      cleanBusterButton
+      cleanBusterButton,
+      hireWomanButton
     );
 
     let msg;
@@ -199,7 +221,8 @@ module.exports = {
         if (userData.stats.nut - cleanCost < 0) {
           const cleanBuster = new EmbedBuilder().setTitle(
             `🔦 You need ${cleanCost} 💦 to clean your Nut Buster! ❌💦`
-          );
+          )
+          .setThumbnail(userData.items.backpack?.nut_buster.img)
 
           buttonCollector.stop("Button Clicked");
 
@@ -246,7 +269,8 @@ module.exports = {
         } else {
           const cleanBuster = new EmbedBuilder().setTitle(
             "🔦 Your Nut Buster is already out for a deep clean! 🧹"
-          );
+          )
+          .setThumbnail(userData.items.backpack?.nut_buster.img)
 
           buttonCollector.stop("Button Clicked");
 
@@ -255,6 +279,25 @@ module.exports = {
             components: [],
           });
         }
+      }
+      else if (choice === 'hireWoman') {
+        await updateNut(user, -hireWomanCost);
+        await updateWomanStatus(user, true);
+
+        const hireWoman = new EmbedBuilder().setTitle(
+          "~ Escort ~"
+        )
+        .setDescription(
+          "👩 I'll keep you safe from the big bad Nut Buster 🔦"
+        )
+        .setThumbnail(userData.items.backpack?.woman.img)
+
+        buttonCollector.stop("Button Clicked");
+
+        return await i.update({
+          embeds: [hireWoman],
+          components: [],
+        });
       }
     });
 

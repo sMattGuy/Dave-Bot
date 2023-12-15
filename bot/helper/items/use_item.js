@@ -1,6 +1,7 @@
 const { removeItem } = require("../../../backend/firestore/utility/remove_item");
 const { nutBuster } = require("./nut_buster");
 const { semenSeeker } = require("./semen_seeker");
+const { woman } = require("./woman");
 
 const useItem = async (interaction, userData, itemData) => {
     const user = interaction.user;
@@ -11,6 +12,9 @@ const useItem = async (interaction, userData, itemData) => {
             break;
         case 'nut_buster':
             await nutBuster(interaction, userData, itemData);
+            break;
+        case 'woman':
+            await woman(interaction, userData, itemData);
             break;
     }
 }

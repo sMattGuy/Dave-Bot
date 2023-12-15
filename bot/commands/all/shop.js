@@ -109,7 +109,7 @@ module.exports = {
       }
 
       let itemId = i.values[0];
-      if (user.items.backpack?.[itemId]?.uses) {
+      if (user.items.backpack?.[itemId]?.uses || user.items.backpack?.[itemId]?.noUses) {
         shopEmbed
         .setTitle(`~ Merchant ~\nYou have: 🧱 ${user.stats.nutBricks}`)
         .setDescription(`You can still use your ${itemsData[itemId].name}! Anything else?`)

@@ -24,10 +24,10 @@ exports.semenSeeker = async (i, userData, item) => {
     }
     else if (listData.length === 0) {
         const itemEmbed = new EmbedBuilder()
-        .setTitle(`~ ${item.name} ~`)
-        .setDescription('It appears there is no cum worth extracting right now sire...')
-        .setFields()
-        .setThumbnail(`${item.img}`)
+            .setTitle(`~ ${item.name} ~`)
+            .setDescription('It appears there is no cum worth extracting right now sire...')
+            .setFields()
+            .setThumbnail(`${item.img}`)
 
     let msg = await i.editReply({
         embeds: [itemEmbed],

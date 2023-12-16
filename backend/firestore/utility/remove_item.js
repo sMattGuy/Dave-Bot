@@ -12,9 +12,14 @@ exports.removeItem = async (user, itemData, lastUse) => {
         ? delete backpack[itemData.id]
         : backpack[itemData.id].quantity--;
     }
-    else itemData.uses === 1
+    else if (itemData?.uses) {
+        itemData.uses === 1
         ? delete backpack[itemData.id]
         : backpack[itemData.id].uses--;
+    }
+    else if (itemData?.noUses) {
+        backpack[itemData.id].active = false;
+    }
 
     if (lastUse && backpack?.[itemData.id]) {
         const date = new Date();

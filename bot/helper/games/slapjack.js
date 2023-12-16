@@ -256,9 +256,14 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
   players.push(new Player(opp.id, [deck.draw(), deck.draw()]));
 
   let rematchAccept = 0;
-  const endGame = async (playersInt, timeout) => {
+  const endGame = async (playersInt, turn) => {
     const checkWin = () => {
-      if (timeout) return 'TEST';
+      if (turn) return {
+          type: 'timeout',
+          reason: 'Someone forgot to play! 💦',
+          winnerData: turn === 0 ? oppData : userData,
+          loserData: turn === 0 ? userData : oppData,
+      }
       else if (players[0].score() > 21 && players[1].score() > 21) {
         return {
           type: 'push',
@@ -312,11 +317,27 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
 
     const endResult = checkWin();
 
-    if (endResult === 'TEST') {
-      console.log('timeout');
+    if (endResult === 'timeout') {
+      await updateNut(endResult.winnerData, betAmt * 2);
+      const endEmbed = new EmbedBuilder()
+      .setTitle(`${endResult.loserData.username} forgot to play. ${endResult.winnerData.username} Wins! ✋`)
+      //.setFields(endFields);
+
+      for (let i = 0; i < 2; i++) {
+        await playersInt[i].edit({ 
+          embeds: [ endEmbed ],
+          components: []
+         });
+      }
+
+      await msgOG.edit({
+        embeds: [ endEmbed ],
+        components: []
+      });
       return;
     }
-    if (endResult?.type === 'push') {
+
+    if (endResult.type === 'push') {
       await updateNut(user, betAmt);
       await updateNut(opp, betAmt);
     }
@@ -446,9 +467,6 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
 
     const waitingRematchEmbed = new EmbedBuilder()
       .setTitle('Waiting for other player...')
-
-    const timeoutRematchEmbed = new EmbedBuilder()
-      .setTitle('Thanks for playing! 💦 😊')
 
       // first collector
       let checkId = user.id;
@@ -672,7 +690,7 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
     roundCollector.on('collect', async (roundInt) => {
         const choice = roundInt.customId;
         roundInt.deferUpdate();
-        roundCollector.stop();
+        roundCollector.stop('ButtonClick');
         if (choice === 'hit') {
           didHit = true;
           canSlap = false;
@@ -707,6 +725,12 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
           await runGame(playersInt);
         }
     });
+
+    roundCollector.on('end', async (collected, reason) => {
+      if (reason !== 'ButtonClick') {
+        await endGame(playersInt, turn);
+      }
+    })
   };
   if (rematch) await runGame([newPlayersInt[0], newPlayersInt[1]]);
 };

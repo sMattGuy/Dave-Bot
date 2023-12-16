@@ -5,6 +5,7 @@ const { removeItem } = require("../../../backend/firestore/utility/remove_item")
 const { updateSeek } = require("../../../backend/firestore/utility/update_seek");
 const { updateNut } = require("../../../backend/firestore/main/update_nut");
 const { updateBalls } = require("../../../backend/firestore/main/update_balls");
+const getUser = require("../../../backend/firestore/main/getUser");
 
 let client = null;
 exports.receiveClient = (clientClass) => {
@@ -66,7 +67,7 @@ exports.nutBuster = async (i, userData, item) => {
     }
 
     if (seeked.length === 0) {
-        itemEmbed.setDescription('You must use the Semen Seeker first to find some full balls!')
+        itemEmbed.setDescription('🧐 You must use the Semen Seeker first to find some full balls! 💧')
         return await i.editReply({
             embeds: [itemEmbed],
             components: []
@@ -105,22 +106,41 @@ exports.nutBuster = async (i, userData, item) => {
     });
 
     itemCollector.on('collect', async (int) => {
+        userData = await getUser(user);
         await removeItem(userData, item, true);
         const bustId = int.customId;
         const nutAmt = Math.floor(usersData[bustId].stats.jerkStores / item.levelStats.extractDivider[item.level - 1]);
         await updateSeek(user, seeked.filter(id => id !== bustId));
-        await updateNut(user, nutAmt);
-        await updateBalls({id: bustId}, -nutAmt);
+
+
         itemEmbed
-            .setDescription(`💦 🔦 You extracted 💦 ${nutAmt} from ${usersData[bustId].username}'s balls!
-            \nYou now have 💦 ${userData.stats.nut + nutAmt}`)
+            .setDescription(`💦 🔦 You extracted 💦 ${nutAmt} from ${usersData[bustId].username}'s balls!\nYou now have 💦 ${userData.stats.nut + nutAmt}`)
             .setFields();
+
+        const dmEmbed = new EmbedBuilder()
+            .setTitle(`😡 ${userData.username} extracted 💦 ${nutAmt} from your balls! 😡`)
+            .setThumbnail(`${item.img}`)
+        
+        //woman stuff
+        if (usersData[bustId].items.backpack?.woman?.active) {
+            await removeItem(usersData[bustId], usersData[bustId].items.backpack.woman);
+            itemEmbed.setDescription(
+            `👩 A woman distracted you and made you nut a little!\nYou now have 💦 ${userData.stats.jerkStores - userData.stats.jerkStores / 2} in your balls. 😔`
+            )
+            .setThumbnail(`${usersData[bustId].items.backpack.woman.img}`)
+            dmEmbed
+                .setTitle(`👩 ${userData.username} was distracted by your escort! Your balls are warm and safe. 🤩`)
+            await updateBalls({id: user.id}, -(userData.stats.jerkStores / 2));
+        }
+        else {
+            await updateNut(user, nutAmt);
+            await updateBalls({id: bustId}, -nutAmt);
+        }
+
         await int.update({
             embeds: [itemEmbed],
             components: []
         });
-        const dmEmbed = new EmbedBuilder()
-            .setTitle(`😡 ${userData.username} extracted 💦 ${nutAmt} from your balls! 😡`)
         const bustSnowflake = await client.users.fetch(`${bustId}`)
         await bustSnowflake.send({ embeds: [dmEmbed] });
         itemCollector.stop();

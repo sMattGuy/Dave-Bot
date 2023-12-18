@@ -157,6 +157,7 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
         embeds: [acceptEmbed],
         components: [],
       });
+      console.log('BOT: ACTIVE GAME')
       await runGame([int, i]);
     } else {
       await i.update({
@@ -514,6 +515,7 @@ exports.playSlapjack = async (int, rematch, userRematch, oppRematch, betAmtRemat
       return await this.playSlapjack(null, true, user, opp, betAmt, rematchInt, msgOG ,rematchCount++);
     });
       }
+      console.log('BOT: INACTIVE GAME')
     });
 }
 

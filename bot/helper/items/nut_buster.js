@@ -6,6 +6,7 @@ const { updateSeek } = require("../../../backend/firestore/utility/update_seek")
 const { updateNut } = require("../../../backend/firestore/main/update_nut");
 const { updateBalls } = require("../../../backend/firestore/main/update_balls");
 const getUser = require("../../../backend/firestore/main/getUser");
+const { updateWomanProtected } = require("../../../backend/firestore/utility/update_woman_protected");
 
 let client = null;
 exports.receiveClient = (clientClass) => {
@@ -106,6 +107,7 @@ exports.nutBuster = async (i, userData, item) => {
     });
 
     itemCollector.on('collect', async (int) => {
+        await int.deferUpdate();
         userData = await getUser(user);
         await removeItem(userData, item, true);
         const bustId = int.customId;
@@ -123,6 +125,8 @@ exports.nutBuster = async (i, userData, item) => {
         
         //woman stuff
         if (usersData[bustId].items.backpack?.woman?.active) {
+            const womanItem = usersData[bustId].items.backpack.woman;
+            womanItem.id = 'woman';
             await removeItem(usersData[bustId], usersData[bustId].items.backpack.woman);
             itemEmbed.setDescription(
             `👩 A woman distracted you and made you nut a little!\nYou now have 💦 ${userData.stats.jerkStores - userData.stats.jerkStores / 2} in your balls. 😔`
@@ -131,13 +135,14 @@ exports.nutBuster = async (i, userData, item) => {
             dmEmbed
                 .setTitle(`👩 ${userData.username} was distracted by your escort! Your balls are warm and safe. 🤩`)
             await updateBalls({id: user.id}, -(userData.stats.jerkStores / 2));
+            await updateWomanProtected({id: bustId}, nutAmt);
         }
         else {
             await updateNut(user, nutAmt);
             await updateBalls({id: bustId}, -nutAmt);
         }
 
-        await int.update({
+        await int.editReply({
             embeds: [itemEmbed],
             components: []
         });

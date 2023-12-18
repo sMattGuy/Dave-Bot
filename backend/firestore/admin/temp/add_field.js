@@ -9,7 +9,7 @@ exports.addField = async () => {
         if(docSnap.id === 'testuser123') return;
         const docRef = doc(db, 'users', docSnap.id)
         await updateDoc(docRef, {
-            'stats.lastSeek': []
+            'stats.darkNut': 0
         })
     })
 }

@@ -47,12 +47,13 @@ module.exports = {
         value: `🧱 ${data.stats.nutBricks}`,
         inline: true,
       },
-      { name: "Nut", value: `💦 ${data.stats.nut}`, inline: true },
+      { name: "Nut Jar", value: `💦 ${data.stats.nut}`, inline: true },
       {
         name: "Balls",
         value: `💧 ${data.stats.jerkStores}/${data.ballsMax}`,
         inline: true,
       },
+      { name: `${data.stats.darkNut > 0 ? 'Dark Nut' : '????'}`, value: `🩸 ${data.stats.darkNut}`, inline: true },
       {
         name: "Daily Jerks Remaining",
         value: `${data.stats.maxJerks - data.stats.jerks}/${
@@ -70,7 +71,7 @@ module.exports = {
       "Clippy says: Jerking off on discord is not the same as jerking off... unless?",
     ]
     statsDesc +=
-      `${statsDescOptions[Math.floor(Math.random * statsDescOptions.length)]}`;
+      `${statsDescOptions[Math.floor(Math.random() * statsDescOptions.length)]}`;
 
     //const shortInv = invCondenser(userData.items.backpack);
 

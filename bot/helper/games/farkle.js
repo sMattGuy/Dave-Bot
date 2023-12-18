@@ -155,12 +155,14 @@ const playJizzle = async (interaction) => {
   );
 
   if (secondGame) {
+    console.log('BOT: ACTIVE GAME')
     msg = await interaction.editReply({
       embeds: [jizzleEmbed],
       components: [optionsRow],
     });
   }
   else {
+    console.log('BOT: ACTIVE GAME')
     msg = await interaction.reply({
       embeds: [jizzleEmbed],
       components: [optionsRow],
@@ -348,6 +350,7 @@ const playJizzle = async (interaction) => {
       console.log(diceValues)
       score += calculateScore(diceValues);
       console.log("Final Score:", score);
+      console.log('BOT: INACTIVE GAME')
       diceValues = [];
 
       jizzleButtonCollector.stop('game over');

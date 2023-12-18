@@ -15,6 +15,7 @@ const {
 } = require("../../../backend/firestore/utility/get_merchant");
 const { addItem } = require("../../../backend/firestore/utility/add_item");
 const { addUpgrade } = require("../../../backend/firestore/utility/add_upgrade");
+const { checkJizzler } = require("../../../backend/firestore/utility/check_jizzler");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -24,7 +25,10 @@ module.exports = {
     let user = await getUser(interaction.user);
     const itemsData = await getItems();
     const merchantData = await getMerchant();
-    const timersData = await getTimers();
+    //const timersData = await getTimers();
+
+    //const showJizzler = await checkJizzler();
+    //console.log(showJizzler);
 
     const shopFields = [];
 

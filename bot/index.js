@@ -48,7 +48,7 @@ for (const file of eventFiles) {
 
 // functions to run on bot start
 //changeToMap();
-//addField();
+addField();
 //toptimer();
 dailyResets();
 updateJerkStores();

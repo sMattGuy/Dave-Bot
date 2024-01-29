@@ -146,7 +146,8 @@ exports.nutBuster = async (i, userData, item) => {
             embeds: [itemEmbed],
             components: []
         });
-        const bustSnowflake = await client.users.fetch(`${bustId}`)
+
+        const bustSnowflake = await client.users.fetch(`${bustId}`);
         await bustSnowflake.send({ embeds: [dmEmbed] });
         itemCollector.stop();
     });

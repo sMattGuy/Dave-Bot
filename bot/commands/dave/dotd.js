@@ -14,8 +14,7 @@ module.exports = {
 
 		const fortunes = fs.readFileSync(__dirname + '/fortunes.txt', 'utf-8');
 		const fortunesArr = fortunes.split('\n');
-		let fortuneCount = 0;
-		fortunesArr.forEach(text => fortuneCount++);
+		const fortuneCount = fortunesArr.length;
 		const fortune = fortunesArr[Math.floor(Math.random() * fortuneCount)];
 
         const dotdEmbed = new EmbedBuilder()

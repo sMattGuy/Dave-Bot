@@ -1,7 +1,7 @@
 const { Events } = require('discord.js');
 const { get_wiki } = require('../helper/get_wiki.js');
 
-const MESSAGE_CHANCE = 0.03;
+const MESSAGE_CHANCE = 0.01;
 
 module.exports = {
 	name: Events.MessageCreate,

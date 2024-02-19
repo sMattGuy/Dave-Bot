@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const token = process.env.TOKEN;
 const clientId = process.env.CLIENTID;
+const guildId = process.env.SERVERID;
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
@@ -40,8 +41,13 @@ const rest = new REST().setToken(token);
 			Routes.applicationCommands(clientId),
 			{ body: commands },
 		);
+		const server_data = await rest.put(
+			Routes.applicationGuildCommands(clientId, guildId),
+			{ body: commands },
+		);
 
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+		console.log(`Successfully reloaded ${server_data.length} application (/) commands.`);
 	} catch (error) {
 		// And of course, make sure you catch and log any errors!
 		console.error(error);

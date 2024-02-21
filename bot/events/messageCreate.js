@@ -36,7 +36,7 @@ async function reply_to_mention(message){
 	}
 	if(Math.random() <= MESSAGE_CHANCE){
 		const DAVE_ID = "534608357001265152";
-		if(message.content.includes(DAVE_ID)){
+		if(message.content.includes(DAVE_ID) || message.content.toUpperCase().includes("DAVE")){
 			//dave mentioned in message
 			const DAVE_REPLIES = fs.readFileSync(__dirname + '/replies.txt', 'utf-8');
 			const REPLIES_ARR = DAVE_REPLIES.split('\n');

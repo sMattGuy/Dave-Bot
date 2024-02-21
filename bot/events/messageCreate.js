@@ -1,7 +1,7 @@
 const { Events } = require('discord.js');
 const { get_wiki } = require('../helper/get_wiki.js');
 
-const MESSAGE_CHANCE = 0.01;
+const MESSAGE_CHANCE = 0.02;
 
 module.exports = {
 	name: Events.MessageCreate,
@@ -34,9 +34,11 @@ async function reply_to_mention(message){
 	if(message.content.length == 0 || message.author.bot){
 		return;
 	}
-	const DAVE_ID = "534608357001265152";
-	if(message.content.includes(DAVE_ID)){
-		//dave mentioned in message
-		await message.channel.send(DAVE_REPLIES[Math.floor(Math.random()*DAVE_REPLIES.length)]);
+	if(Math.random() <= MESSAGE_CHANCE){
+		const DAVE_ID = "534608357001265152";
+		if(message.content.includes(DAVE_ID)){
+			//dave mentioned in message
+			await message.channel.send(DAVE_REPLIES[Math.floor(Math.random()*DAVE_REPLIES.length)]);
+		}
 	}
 }

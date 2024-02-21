@@ -1,5 +1,6 @@
 const { Events } = require('discord.js');
 const { get_wiki } = require('../helper/get_wiki.js');
+const fs = require('fs');
 
 const MESSAGE_CHANCE = 0.02;
 
@@ -29,7 +30,6 @@ async function send_wiki_text(message){
 	}
 }
 
-const DAVE_REPLIES = ["Hold up.","I\'m editing one sec.","Bet.","What\'s good.","We out to Taco Express?","One sec on the phone.","Burritos?","Maybe in an hour.","Cleaning my car.","Mid set hold up.","I\'ll hop on soon.","Fifa?","Lethal?","Titanfall?","Let me tell you somethin\'..... Nevermind.","Gotta dip in like 30 mins.","wya."];
 async function reply_to_mention(message){
 	if(message.content.length == 0 || message.author.bot){
 		return;
@@ -38,7 +38,11 @@ async function reply_to_mention(message){
 		const DAVE_ID = "534608357001265152";
 		if(message.content.includes(DAVE_ID)){
 			//dave mentioned in message
-			await message.channel.send(DAVE_REPLIES[Math.floor(Math.random()*DAVE_REPLIES.length)]);
+			const DAVE_REPLIES = fs.readFileSync(__dirname + '/replies.txt', 'utf-8');
+			const REPLIES_ARR = DAVE_REPLIES.split('\n');
+			const REPLY_COUNT = REPLIES_ARR.length;
+			const REPLY = REPLIES_ARR[Math.floor(Math.random()*REPLY_COUNT)];
+			await message.channel.send(REPLY);
 		}
 	}
 }

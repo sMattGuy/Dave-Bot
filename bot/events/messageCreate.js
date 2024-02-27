@@ -1,8 +1,9 @@
 const { Events } = require('discord.js');
 const { get_wiki } = require('../helper/get_wiki.js');
+const globals = require('../helper/global_variables.js');
 const fs = require('fs');
 
-const MESSAGE_CHANCE = 0.02;
+
 
 module.exports = {
 	name: Events.MessageCreate,
@@ -19,7 +20,7 @@ async function send_wiki_text(message){
 		return;
 	}
 	// valid message test if going to send a chunk of text
-	if(Math.random() <= MESSAGE_CHANCE){
+	if(Math.random() <= globals.MESSAGE_CHANCE){
 		//message will be sent
 		let wiki_text = await get_wiki();
 		await message.channel.send('Let me tell you somethin\'...');
@@ -34,7 +35,7 @@ async function reply_to_mention(message){
 	if(message.content.length == 0 || message.author.bot){
 		return;
 	}
-	if(Math.random() <= MESSAGE_CHANCE){
+	if(Math.random() <= globals.REPLY_CHANCE){
 		const DAVE_ID = "534608357001265152";
 		if(message.content.includes(DAVE_ID) || message.content.toUpperCase().includes("DAVE")){
 			//dave mentioned in message

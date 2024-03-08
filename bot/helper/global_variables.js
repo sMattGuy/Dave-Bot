@@ -1,4 +1,5 @@
 var MESSAGE_CHANCE = 0.02;
-var REPLY_CHANCE = 0.2;
+var REPLY_CHANCE = 0.3;
+var POEM_CHANCE = 0.04;
 
-module.exports = {MESSAGE_CHANCE, REPLY_CHANCE};
+module.exports = {MESSAGE_CHANCE, REPLY_CHANCE, POEM_CHANCE};

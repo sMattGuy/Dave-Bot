@@ -3,13 +3,12 @@ const { get_wiki } = require('../helper/get_wiki.js');
 const globals = require('../helper/global_variables.js');
 const fs = require('fs');
 
-
-
 module.exports = {
 	name: Events.MessageCreate,
 	async execute(message) {
 		await reply_to_mention(message);
 		await send_wiki_text(message);
+		await send_poem(message);
 	},
 };
 
@@ -46,4 +45,30 @@ async function reply_to_mention(message){
 			await message.channel.send(REPLY);
 		}
 	}
+}
+
+async function send_poem(message) {
+    if (message.content.length == 0 || message.author.bot) {
+        return;
+    }
+    if (Math.random() <= globals.POEM_CHANCE) {
+        // have dave send a random poem
+        await message.channel.send(`I feel inspired...`);
+        await message.channel.sendTyping();
+        try {
+			const line_random = Math.floor(Math.random()*5)+5
+            const response = await fetch(`https://poetrydb.org/linecount,poemcount/${line_random};1`);
+            const poem_json = await response.json();
+            const title = poem_json[0].title;
+            let fullpoem = "";
+            for (let i = 0; i < poem_json[0].linecount; i++) {
+                fullpoem += `*${poem_json[0].lines[i]}*\n`;
+            }
+            const final_poem = `**${title}**\n__By David__\n${fullpoem}`;
+            message.channel.send(final_poem);
+        } catch (err) {
+			console.log(error)
+            message.channel.send(`Nevermind...`);
+        }
+    }
 }

@@ -12,6 +12,7 @@ module.exports = {
 				.addChoices(
 					{name: 'Reply',value:'reply'},
 					{name: 'Yap',value:'yap'},
+					{name: 'Poem',value:'poem'},
 				)
 				.setRequired(true))
 		.addIntegerOption(option =>
@@ -29,10 +30,15 @@ module.exports = {
 			globals.REPLY_CHANCE = action_percent*.01
 			interaction.reply({content:`Reply chance has been updated from ${old_percentage} to ${globals.REPLY_CHANCE}`,ephemeral:true})
 		}
-		else{
+		else if(action_option == 'yap'){
 			const old_percentage = globals.MESSAGE_CHANCE
 			globals.MESSAGE_CHANCE = action_percent*.01
 			interaction.reply({content:`Yap chance has been updated from ${old_percentage} to ${globals.MESSAGE_CHANCE}`,ephemeral:true})
+		}
+		else{
+			const old_percentage = globals.POEM_CHANCE
+			globals.POEM_CHANCE = action_percent*.01
+			interaction.reply({content:`Poem chance has been updated from ${old_percentage} to ${globals.POEM_CHANCE}`,ephemeral:true})
 		}
 	},
 };

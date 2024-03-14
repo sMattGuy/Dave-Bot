@@ -56,14 +56,32 @@ async function send_poem(message) {
         await message.channel.send(`I feel inspired...`);
         await message.channel.sendTyping();
         try {
-			const line_random = Math.floor(Math.random()*5)+5
-            const response = await fetch(`https://poetrydb.org/linecount,poemcount/${line_random};1`);
+            const response = await fetch(`https://poetrydb.org/random`);
             const poem_json = await response.json();
             const title = poem_json[0].title;
             let fullpoem = "";
-            for (let i = 0; i < poem_json[0].linecount; i++) {
-                fullpoem += `*${poem_json[0].lines[i]}*\n`;
-            }
+			let new_line_count = 0;
+			while(true){
+				if(new_line_count >= poem_json[0].lines.length){
+					// end of poem reached
+					break;
+				}
+				else if(new_line_count >= 15){
+					//break if getting too long
+					break;
+				}
+				else if(new_line_count >= 5 && poem_json[0].lines[new_line_count] == ""){
+					// attempt to get to at least the end of the paragraph
+					break;
+				}
+				else{
+					// add line to poem
+					if(poem_json[0].lines[new_line_count] != ""){
+						fullpoem += `*${poem_json[0].lines[new_line_count]}*\n`;
+					}
+					new_line_count++;
+				}
+			}
             const final_poem = `**${title}**\n__By David__\n${fullpoem}`;
             message.channel.send(final_poem);
         } catch (err) {

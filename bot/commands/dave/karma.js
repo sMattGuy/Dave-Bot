@@ -8,7 +8,7 @@ module.exports = {
 	async execute(interaction) {
         let user = await Users.findOne({where:{user_id: interaction.user.id}});
 		if(!user){
-			user = await Users.create({user_id: interaction.user.id, karma: 10, last_fortune: Date.now()});
+			user = await Users.create({user_id: interaction.user.id, karma: 10});
 		}
 		await interaction.reply({ content: `Current Karma: ${user.karma}`, ephemeral: true });
 	},

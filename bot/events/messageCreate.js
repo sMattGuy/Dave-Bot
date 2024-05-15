@@ -1,7 +1,8 @@
 const { Events } = require('discord.js');
 const { get_wiki } = require('../helper/get_wiki.js');
 const globals = require('../helper/global_variables.js');
-const fs = require('fs');
+const { Replies } = require('../DB/functions/dbObjects.js');
+const { Sequelize } = require('sequelize');
 
 module.exports = {
 	name: Events.MessageCreate,
@@ -38,11 +39,8 @@ async function reply_to_mention(message){
 		const DAVE_ID = "534608357001265152";
 		if(message.content.includes(DAVE_ID) || message.content.toUpperCase().includes("DAVE")){
 			//dave mentioned in message
-			const DAVE_REPLIES = fs.readFileSync(__dirname + '/replies.txt', 'utf-8');
-			const REPLIES_ARR = DAVE_REPLIES.split('\n');
-			const REPLY_COUNT = REPLIES_ARR.length;
-			const REPLY = REPLIES_ARR[Math.floor(Math.random()*REPLY_COUNT)];
-			await message.channel.send(REPLY);
+			const REPLY = await Replies.findOne({order: Sequelize.literal('random()')});
+			await message.channel.send(REPLY.text);
 		}
 	}
 }

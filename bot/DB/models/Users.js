@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		karma: {
 			type: DataTypes.INTEGER,
-			defaultValue: 0,
+			defaultValue: 10,
 			allowNull: false,
 		},
         last_fortune: {

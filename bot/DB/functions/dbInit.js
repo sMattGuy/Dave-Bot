@@ -12,8 +12,9 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 const fortune_data = fs.readFileSync('../data/fortunes.txt','utf-8');
 const reply_data = fs.readFileSync('../data/replies.txt','utf-8');
 
-const fortune_data_formatted = fortune_data.split('\r\n');
-const reply_data_formatted = reply_data.split('\r\n');
+const regex = new RegExp("\\r?\\n");
+const fortune_data_formatted = fortune_data.split(regex);
+const reply_data_formatted = reply_data.split(regex);
 
 // db objects
 const Fortunes = require('../models/Fortunes.js')(sequelize, Sequelize.DataTypes);

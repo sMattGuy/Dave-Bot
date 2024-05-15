@@ -4,7 +4,7 @@ const { Users } = require('../../DB/functions/dbObjects.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('daveoptions')
+		.setName('useroptions')
 		.setDescription("Modify a users data")
 		.addUserOption(option => 
 			option.setName('user')

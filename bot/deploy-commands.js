@@ -43,7 +43,7 @@ const rest = new REST().setToken(token);
 		);
 		const server_data = await rest.put(
 			Routes.applicationGuildCommands(clientId, guildId),
-			{ body: commands },
+			{ body: [] },
 		);
 
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);

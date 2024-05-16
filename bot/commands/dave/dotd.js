@@ -19,6 +19,7 @@ module.exports = {
 			else{
 				user.karma++;
 			}
+			user.last_fortune = Date.now();
 			user.save();
 		}
 
@@ -51,7 +52,7 @@ module.exports = {
 			}
 			let selected_fortune = selection_array[Math.floor(Math.random()*selection_array.length)];
 			const dotdEmbed = new EmbedBuilder()
-				.setTitle(`${selected_fortune.text}`)
+				.setTitle(`#${selected_fortune.id}: "${selected_fortune.text}"`)
 				.setDescription(`\\- ${selected_fortune.author}`);
 
 			let msg = await interaction.reply({ embeds: [dotdEmbed], fetchReply: true });

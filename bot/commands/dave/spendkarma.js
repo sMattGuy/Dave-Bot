@@ -19,10 +19,8 @@ module.exports = {
 		    await interaction.reply({ embeds: [karmaEmbed], ephemeral: true});
         }
         else{
-            user.karma -= 10;
-            await user.save();
             const modal = new ModalBuilder()
-                    .setCustomId('newdotd')
+                    .setCustomId('newdotdsp')
                     .setTitle('Create a new DOTD!');
             const new_dotd = new TextInputBuilder()
                 .setCustomId('wisdom')

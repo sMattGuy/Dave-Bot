@@ -1,11 +1,16 @@
 const { Events } = require('discord.js');
-const { Fortunes } = require('../DB/functions/dbObjects.js');
+const { Fortunes, Users } = require('../DB/functions/dbObjects.js');
 
 module.exports = {
 	name: Events.InteractionCreate,
 	async execute(interaction) {
 		if(interaction.isModalSubmit()){
-			if(interaction.customId == 'newdotd'){
+			if(interaction.customId == 'newdotd' || interaction.customId == 'newdotdsp'){
+				if(interaction.customId == 'newdotdsp'){
+					const user = await Users.findOne({where:{user_id: interaction.user.id}});
+					user.karma -= 10;
+					await user.save();
+				}
 				const new_dotd = interaction.fields.getTextInputValue('wisdom');
 				const username = interaction.user.username;
 				await Fortunes.create({'text':new_dotd,'author':username});

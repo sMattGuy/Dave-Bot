@@ -13,7 +13,7 @@ module.exports = {
 			user = await Users.create({user_id: interaction.user.id, karma: 11, last_fortune: Date.now()});
 		}
 		else{
-			if(user.last_fortune + 64800000 >= Date.now()){
+			if(user.last_fortune + 32400000 >= Date.now()){
 				user.karma--;
 			}
 			else{

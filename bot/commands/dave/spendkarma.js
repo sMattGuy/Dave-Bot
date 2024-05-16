@@ -11,15 +11,15 @@ module.exports = {
 		if(!user){
 			user = await Users.create({user_id: interaction.user.id, karma: 10});
 		}
-        if(user.karma < 30){
+        if(user.karma < 10){
             const karmaEmbed = new EmbedBuilder()
 			    .setTitle(`Not Enough Karma!`)
-			    .setDescription(`You do not have enough Karma! You only have ${user.karma} Karma, but need 30 to create a DOTD!`);
+			    .setDescription(`You do not have enough Karma! You only have ${user.karma} Karma, but need 10 to create a DOTD!`);
 
 		    await interaction.reply({ embeds: [karmaEmbed], ephemeral: true});
         }
         else{
-            user.karma -= 30;
+            user.karma -= 10;
             await user.save();
             const modal = new ModalBuilder()
                     .setCustomId('newdotd')

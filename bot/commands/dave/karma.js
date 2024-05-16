@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
+const { EmbedBuilder } = require('@discordjs/builders');
 const { Users } = require('../../DB/functions/dbObjects.js');
 
 module.exports = {
@@ -10,6 +11,10 @@ module.exports = {
 		if(!user){
 			user = await Users.create({user_id: interaction.user.id, karma: 10});
 		}
-		await interaction.reply({ content: `Current Karma: ${user.karma}`, ephemeral: true });
+		const karmaEmbed = new EmbedBuilder()
+			.setTitle(`Current Karma`)
+			.setDescription(`You currently have: ${user.karma} Karma`);
+
+		await interaction.reply({ embeds: [karmaEmbed], ephemeral: true});
 	},
 };

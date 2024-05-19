@@ -58,6 +58,12 @@ module.exports = {
 			let msg = await interaction.reply({ embeds: [dotdEmbed], fetchReply: true });
 			await msg.react("👍");
 			await msg.react("👎");
+			if(user.karma >= 10){
+				const karmaEmbed = new EmbedBuilder()
+					.setTitle(`You have enough Karma to make a DOTD!`)
+					.setDescription(`You currently have ${user.karma} karma! Use /spendkarma to create a DOTD!`);
+				await interaction.followUp({embeds: [karmaEmbed], ephemeral: true});
+			}
 		}
 	},
 };

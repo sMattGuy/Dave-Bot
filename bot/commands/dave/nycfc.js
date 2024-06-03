@@ -19,24 +19,33 @@ module.exports = {
 
         let inlineCount = 0;
         pastMatches.forEach(match => {
+            let homeTeam = match.home;
+            let awayTeam = match.away;
+            if (homeTeam.length > 17) {
+                homeTeam = homeTeam.slice(0, 17);
+                homeTeam = homeTeam.concat('..');
+            }
+            if (awayTeam.length > 17) {
+                awayTeam = awayTeam.slice(0, 17);
+                awayTeam = awayTeam.concat('..');
+            }
             if (inlineCount % 3) {
                 //nycFields.push({ name: '\u200b', value: '\u200b' });
             }
             nycFields.push({
-                name: `${match.home} | ${match.score[0]}\n${match.away} | ${match.score[1]}`,
-                value: `${new Date(match.date).toDateString()}`,
+                name: `${new Date(match.date).toDateString()}`,
+                value: `${homeTeam}\n${awayTeam}\n${match.score[0]} - ${match.score[1]}`,
                 inline: true
             });
             inlineCount++;
         });
 
         const nycStats = await getTeamStats();
-        //console.log(nycStats.fixtures.wins)
 
         nycFields.push({
             name: `⚽ NYCFC Stats 📜`,
-            value: `Win: 69 | Loss: 69 | Draw: 69 | MVP: Dave`,
-            //value: `Win: ${nycStats.fixtures.wins.total} | Loss: ${nycStats.fixtures.loses.total} | Draw: ${nycStats.fixtures.draws.total} | MVP: ???`,
+            //value: `Win: 69 | Loss: 69 | Draw: 69 | MVP: Dave`,
+            value: `Win: ${nycStats.fixtures.wins.total} | Loss: ${nycStats.fixtures.loses.total} | Draw: ${nycStats.fixtures.draws.total} | MVP: Dave`,
             inline: false
         });
 

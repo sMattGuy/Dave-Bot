@@ -5,7 +5,7 @@ const getTeamStats = async () => {
         method: 'GET',
         url: 'https://api-football-v1.p.rapidapi.com/v3/teams/statistics',
         params: {
-          league: '866',
+          league: '253',
           season: new Date().getUTCFullYear(),
           team: '1604'
         },

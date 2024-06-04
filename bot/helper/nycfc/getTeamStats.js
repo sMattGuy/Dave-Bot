@@ -1,5 +1,5 @@
 const axios = require('axios');
-
+const api_token = process.env.RAPIDAPIKEY;
 const getTeamStats = async () => {
     const options = {
         method: 'GET',
@@ -10,7 +10,7 @@ const getTeamStats = async () => {
           team: '1604'
         },
         headers: {
-          'x-rapidapi-key': '7d72abfd87msh1e1ee55e26e1abap1c4abejsncb2927f36be6',
+          'x-rapidapi-key': api_token,
           'x-rapidapi-host': 'api-football-v1.p.rapidapi.com'
         }
       };

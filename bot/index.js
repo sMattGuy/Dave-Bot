@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
+const startRefreshNycData = require('./helper/nycfc/refreshNycData');
 
 require('dotenv').config();
 
@@ -40,3 +41,4 @@ for (const file of eventFiles) {
 }
 
 client.login(token);
+startRefreshNycData();

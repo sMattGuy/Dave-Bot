@@ -1,5 +1,5 @@
-const axios = require("axios");
-const api_token = process.env.RAPIDAPIKEY
+const fs = require('fs');
+const getCache = require('./getCache');
 
 const cleanMatchData = async (data) => {
   const pastMatchesRaw = [];
@@ -14,6 +14,7 @@ const cleanMatchData = async (data) => {
   const upcomingMatches = {};
 
   pastMatchesRaw.forEach((match) => {
+    if (match.league.name === 'Friendlies Clubs') return;
     pastMatches.push({
       date: match.fixture.date,
       home: match.teams.home.name,
@@ -24,23 +25,25 @@ const cleanMatchData = async (data) => {
   });
 
   let setNextMatch = false;
+  let setNextClosest = false;
   upcomingMatchesRaw.forEach((match) => {
-    if (!setNextMatch) {
+    if (!setNextMatch && match.fixture.venue.city !== "New York City") {
       upcomingMatches.nextMatch = {
         date: match.fixture.date,
         home: match.teams.home.name,
         away: match.teams.away.name,
         venue: match.fixture.venue.name,
       };
+      setNextMatch = true;
     }
-    setNextMatch = true;
-    if (match.fixture.venue.city === "New York City") {
+    if (!setNextClosest && match.fixture.venue.city === "New York City") {
       upcomingMatches.nextClosest = {
         date: match.fixture.date,
         home: match.teams.home.name,
         away: match.teams.away.name,
         venue: match.fixture.venue.name,
       };
+      setNextClosest = true;
     }
   });
 
@@ -48,25 +51,14 @@ const cleanMatchData = async (data) => {
 };
 
 const getMatchData = async () => {
-  const options = {
-    method: "GET",
-    url: "https://api-football-v1.p.rapidapi.com/v3/fixtures",
-    params: {
-      season: new Date().getUTCFullYear(),
-      team: "1604",
-    },
-    headers: {
-      "x-rapidapi-key": api_token,
-      "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-    },
-  };
+  let nycCache = await getCache();
 
-  try {
-    const res = await axios.request(options);
-    return cleanMatchData(res.data.response);
-  } catch (error) {
-    console.error(error);
-  }
+    try {
+      const fixturesData = nycCache.fixturesData;
+      return cleanMatchData(fixturesData);
+    } catch (error) {
+      console.log(error);
+    }
 };
 
 module.exports = getMatchData;

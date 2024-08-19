@@ -14,8 +14,18 @@ module.exports = {
     const year_word = (years == 1) ? "Year" : "Years";
     const week_word = (weeks == 1) ? "Week" : "Weeks";
     const daveEmbed = new EmbedBuilder()
-        .setTitle(`⏱ ~${years} ${year_word}, ${weeks} ${week_word}~ ⏱`)
-
+    if(years == 0 && weeks == 0){
+      daveEmbed.setTitle(`⏱ ~He just got here!~ ⏱`)
+    }
+    else if(years == 0){
+      daveEmbed.setTitle(`⏱ ~${weeks} ${week_word}~ ⏱`)  
+    }
+    else if(weeks == 0){
+      daveEmbed.setTitle(`⏱ ~${years} ${year_word}~ ⏱`)
+    }
+    else{
+      daveEmbed.setTitle(`⏱ ~${years} ${year_word}, ${weeks} ${week_word}~ ⏱`)
+    }
 		let msg = await interaction.reply({ embeds: [daveEmbed] });
 	},
 };

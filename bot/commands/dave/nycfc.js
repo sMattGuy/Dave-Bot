@@ -29,9 +29,14 @@ module.exports = {
         const nycFields = [];
 
         let inlineCount = 0;
-        pastMatches.forEach(match => {
-            let homeTeam = match.home;
-            let awayTeam = match.away;
+        let match_count = pastMatches.length;
+        let match_start = 0;
+        if(match_count > 22){
+          match_start = match_count - 22;
+        }
+        for(let i=match_start;i<match_count;i++){
+            let homeTeam = pastMatches[i].home;
+            let awayTeam = pastMatches[i].away;
 
             if (homeTeam.length > 17) {
                 homeTeam = homeTeam.slice(0, 17);
@@ -42,14 +47,14 @@ module.exports = {
                 awayTeam = awayTeam.concat('..');
             }
 
-            const matchDate = new Date(match.date);
-            nycFields.push({
+            const matchDate = new Date(pastMatches[i].date);
+            nycFields.push({  
                 name: `${new Date(matchDate.getTime()).toDateString()}`,
-                value: `${homeTeam}\n${awayTeam}\n${match.score[0]} - ${match.score[1]}`,
+                value: `${homeTeam}\n${awayTeam}\n${pastMatches[i].score[0]} - ${pastMatches[i].score[1]}`,
                 inline: true
             });
             inlineCount++;
-        });
+        }
 
         const nycStats = await getTeamStats();
 

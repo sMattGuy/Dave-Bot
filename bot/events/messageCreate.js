@@ -7,6 +7,7 @@ const { Sequelize } = require('sequelize');
 module.exports = {
 	name: Events.MessageCreate,
 	async execute(message) {
+    await interrupt_wiki_text(message);
 		await reply_to_mention(message);
 		await send_wiki_text(message);
 		await send_poem(message);
@@ -16,7 +17,7 @@ module.exports = {
 // placing various message functions under here.
 // these could be moved to their own file if it proves too much for one file.
 async function send_wiki_text(message){
-	if(message.content.length == 0 || message.author.bot){
+	if(message.content.length == 0 || message.author.bot || globals.wiki_typing || globals.wiki_interrupt){
 		return;
 	}
 	// valid message test if going to send a chunk of text
@@ -25,10 +26,32 @@ async function send_wiki_text(message){
 		let wiki_text = await get_wiki();
 		await message.channel.send('Let me tell you somethin\'...');
 		await message.channel.sendTyping();
-		setTimeout(() => {
-			message.channel.send(wiki_text).catch(error => {message.channel.send('You know what... nevermind.');});
+		globals.wiki_typing = true;
+    globals.wiki_interrupt = false;
+    setTimeout(() => {
+      if(!globals.wiki_interrupt){
+			  message.channel.send(wiki_text).catch(error => {message.channel.send('You know what... nevermind.');});
+      }
+      globals.wiki_typing = false;
+      globals.wiki_interrupt = false;
 		}, "5000");
 	}
+}
+
+async function interrupt_wiki_text(message){
+	if(message.content.length == 0 || message.author.bot){
+		return;
+	}
+  if(!globals.wiki_typing || globals.wiki_interrupt){
+    return;
+  }
+  const lower_case_msg = message.content.toLowerCase();
+  const shutup_regex = new RegExp("shut.*up");
+  if(shutup_regex.test(lower_case_msg)){
+    globals.wiki_interrupt = true;
+    message.channel.send('Aight man... whatever.');
+    globals.wiki_typing = false;
+  }
 }
 
 async function reply_to_mention(message){

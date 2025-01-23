@@ -69,13 +69,15 @@ async function reply_to_mention(message){
 }
 
 async function send_poem(message) {
-    if (message.content.length == 0 || message.author.bot) {
+    if (message.content.length == 0 || message.author.bot || globals.wiki_typing || globals.wiki_interrupt) {
         return;
     }
     if (Math.random() <= globals.POEM_CHANCE) {
         // have dave send a random poem
         await message.channel.send(`I feel inspired...`);
         await message.channel.sendTyping();
+        globals.wiki_typing = true;
+        globals.wiki_interrupt = false;
         try {
             const response = await fetch(`https://poetrydb.org/random`);
             const poem_json = await response.json();
@@ -106,7 +108,13 @@ async function send_poem(message) {
             const poem_title = bold(title);
             const dave_author = underline("By David");
             const final_poem = `${poem_title}\n${dave_author}\n${fullpoem}`;
-            message.channel.send(final_poem);
+            setTimeout(() => {
+              if(!globals.wiki_interrupt){
+                message.channel.send(final_poem);
+              }
+              globals.wiki_typing = false;
+              globals.wiki_interrupt = false;
+            }, "5000");
         } catch (err) {
 			    console.log(error)
           message.channel.send(`Nevermind...`);

@@ -25,7 +25,8 @@ Admins can use these commands to manage the bot
 |/daveoptions|Allows admins to edit the random chance that Dave will respond in chat.|
 |/useroptions|Allows admins to edit users.|
 ### Chat Features
-Dave bot will randomly talk in chat based on various conditions  
+Dave bot will randomly talk in chat based on various conditions.  
+Dave bot can be interrupted by telling him to **shut up**, cancelling its action.  
 |Action|Trigger|Description|
 |:---|---|:---|
 |Yap|Chance when another message is sent|Dave bot sends a random wikipedia summary.|

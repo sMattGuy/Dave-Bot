@@ -9,11 +9,21 @@ module.exports = (sequelize, DataTypes) => {
 			defaultValue: 10,
 			allowNull: false,
 		},
-        last_fortune: {
+    last_fortune: {
 			type: DataTypes.INTEGER,
 			defaultValue: 0,
 			allowNull: false,
 		},
+    keno_numbers: {
+      type: DataTypes.STRING,
+      defaultValue: "",
+      allowNull: false,
+    },
+    keno_date: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      allowNull: false,
+    }
 	}, {
 		timestamps: false,
 	});

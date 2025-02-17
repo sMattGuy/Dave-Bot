@@ -36,15 +36,16 @@ module.exports = {
       }
     }
     const picked_numbers = await generate_numbers();
+    user.karma -= 2;
     user.keno_numbers = picked_numbers.toString();
     user.keno_date = currentDate.toString();
 		await user.save();
 
     const successEmbed = new EmbedBuilder()
-      .setTitle(`Ticket Bought!`)
-      .setDescription(`You bought a ticket! Your numbers are: ${picked_numbers.toString()}`);
+      .setTitle(`${interaction.user.displayName} bought a ${(currentDate.getHours()+1)%12} o'clock Karma Keno Ticket!`)
+      .setDescription(`Your numbers are: ${picked_numbers.toString()}`);
 
-    await interaction.reply({ embeds: [successEmbed], ephemeral: true});
+    await interaction.reply({ embeds: [successEmbed] });
     return;
 	},
 };

@@ -56,5 +56,6 @@ async function generate_numbers(){
     let r = Math.floor(Math.random() * 80) + 1;
     if(arr.indexOf(r) === -1) arr.push(r);
   }
+  arr.sort(function(a,b){return a-b});
   return arr;
 }

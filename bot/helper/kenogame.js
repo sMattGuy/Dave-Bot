@@ -22,7 +22,7 @@ async function process_keno(client){
           const user_numbers = user.keno_numbers.split(",");
           let matches = await count_matches(winning_numbers, user_numbers);
           if(matches >= 5){
-            const payout = 2 * payouts[matches - 5];
+            const payout = payouts[matches - 5];
             winners.push([user.user_id,payout]);
             user.karma += payout;
             await user.save()

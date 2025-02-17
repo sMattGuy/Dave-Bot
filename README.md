@@ -7,7 +7,7 @@ When receiving a DOTD, a user will be given 1 Karma. Using it too much though wi
 A User can spend 10 of their Karma to create their own DOTD, which will be added to the random pool, with them as the author.
 |Command|Description|
 |:---|:---|
-|/karma|Shows a users current Karma value|
+|/karma|Shows a users current Karma value.|
 |/spendkarma|Allows a user to spend 10 Karma to make a DOTD.|
 ### Commands
 Dave bot can be directly interacted with using slash commands
@@ -18,6 +18,22 @@ Dave bot can be directly interacted with using slash commands
 |/ohm|Allows a user to query if another user is Zen.|
 |/ratedave|Allows everyone to rate Dave to estimate approval.|
 |/nycfc|Shows how NYCFC is doing in their current season.|
+### Karma Keno
+Users can play an hourly game of Karma Keno with their Karma. If any user plays Karma Keno, then at the start of every hour it will show the winning numbers and DM any users who won.  
+The paytable is as follows:
+|Hits|Payout|
+|:---|:---|
+|10|20000|
+|9|9000|
+|8|2000|
+|7|284|
+|6|48|
+|5|10|
+
+|Command|Description|
+|:---|:---|
+|/keno|Purchases a Karma Keno ticket for 2 Karma.|
+|/checkticket|Shows the users numbers for their ticket.|
 ### Admin Commands
 Admins can use these commands to manage the bot
 |Command|Description|

@@ -2,6 +2,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const startRefreshNycData = require('./helper/nycfc/refreshNycData');
+const { CronJob } = require('cron');
+const { process_keno } = require('./helper/kenogame.js');
 
 require('dotenv').config();
 
@@ -40,5 +42,15 @@ for (const file of eventFiles) {
 	}
 }
 
+const keno_job = new CronJob(
+  '0 * * * *',
+  function(){
+    process_keno(client)
+  },
+  null,
+  false,
+  'America/New_York'
+)
 client.login(token);
 startRefreshNycData();
+keno_job.start()

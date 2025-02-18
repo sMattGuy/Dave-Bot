@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { EmbedBuilder } = require('@discordjs/builders');
 const { Users } = require('../../DB/functions/dbObjects.js');
 
@@ -15,6 +15,6 @@ module.exports = {
 			.setTitle(`Current Karma`)
 			.setDescription(`You currently have: ${user.karma} Karma`);
 
-		await interaction.reply({ embeds: [karmaEmbed], ephemeral: true});
+		await interaction.reply({ embeds: [karmaEmbed], flags: MessageFlags.Ephemeral});
 	},
 };

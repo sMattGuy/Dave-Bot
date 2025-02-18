@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('@discordjs/builders');
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { Users } = require('../../DB/functions/dbObjects.js');
 
 module.exports = {
@@ -16,7 +16,7 @@ module.exports = {
 				.setTitle(`Not Enough Karma!`)
 				.setDescription(`You cannot afford that ticket! You only have ${user.karma} Karma!`);
 
-			await interaction.reply({ embeds: [poorEmbed], ephemeral: true});
+			await interaction.reply({ embeds: [poorEmbed], flags: MessageFlags.Ephemeral});
       return
     }
     const currentDate = new Date()
@@ -31,7 +31,7 @@ module.exports = {
 				  .setTitle(`Ticket Owned!`)
 				  .setDescription(`You already own a ticket! Use /checkticket to see it!`);
 
-			  await interaction.reply({ embeds: [ownedEmbed], ephemeral: true});
+			  await interaction.reply({ embeds: [ownedEmbed], flags: MessageFlags.Ephemeral});
         return;
       }
     }

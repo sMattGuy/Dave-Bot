@@ -8,11 +8,10 @@ module.exports = {
   async execute(interaction) {
       const rateEmbed = new EmbedBuilder().setTitle("Do you rock wit Dave? 🧐");
 
-      let msg = await interaction.reply({ embeds: [rateEmbed] });
-      msg = await interaction.fetchReply();
+      let msg = await interaction.reply({ embeds: [rateEmbed], withResponse: true });
 
-      msg.react("👍");
-      msg.react("👎");
-      msg.react("🤷");
+      msg.resource.message.react("👍");
+      msg.resource.message.react("👎");
+      msg.resource.message.react("🤷");
   },
 };

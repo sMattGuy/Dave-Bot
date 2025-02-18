@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('@discordjs/builders');
-const { SlashCommandBuilder, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+const { SlashCommandBuilder, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, MessageFlags } = require('discord.js');
 const { Users, Fortunes } = require('../../DB/functions/dbObjects.js');
 const { Sequelize } = require('sequelize');
 
@@ -55,14 +55,14 @@ module.exports = {
 				.setTitle(`#${selected_fortune.id}: "${selected_fortune.text}"`)
 				.setDescription(`\\- ${selected_fortune.author}`);
 
-			let msg = await interaction.reply({ embeds: [dotdEmbed], fetchReply: true });
-			await msg.react("👍");
-			await msg.react("👎");
+			let msg = await interaction.reply({ embeds: [dotdEmbed], withResponse: true });
+			await msg.resource.message.react("👍");
+			await msg.resource.message.react("👎");
 			if(user.karma >= 10){
 				const karmaEmbed = new EmbedBuilder()
 					.setTitle(`You have enough Karma to make a DOTD!`)
 					.setDescription(`You currently have ${user.karma} karma! Use /spendkarma to create a DOTD!`);
-				await interaction.followUp({embeds: [karmaEmbed], ephemeral: true});
+				await interaction.followUp({embeds: [karmaEmbed], flags: MessageFlags.Ephemeral});
 			}
 		}
 	},

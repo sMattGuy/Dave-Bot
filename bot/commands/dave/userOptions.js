@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('@discordjs/builders');
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const { Users } = require('../../DB/functions/dbObjects.js');
 
 module.exports = {
@@ -35,14 +35,14 @@ module.exports = {
 
 		if(topic == 'karma'){
 			user.karma = value;
-			interaction.reply({content:`karma set to ${value}`,ephemeral:true})
+			interaction.reply({content:`karma set to ${value}`,flags: MessageFlags.Ephemeral})
 		}
 		else if(topic == 'last'){
 			user.last_fortune = value;
-			interaction.reply({content:`last fortune set yo ${value}`,ephemeral:true})
+			interaction.reply({content:`last fortune set to ${value}`,flags: MessageFlags.Ephemeral})
 		}
 		else{
-			interaction.reply({content:`something went wrong`,ephemeral:true})
+			interaction.reply({content:`something went wrong`,flags: MessageFlags.Ephemeral})
 		}
 		await user.save();
 	},

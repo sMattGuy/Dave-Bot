@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('@discordjs/builders');
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { Users } = require('../../DB/functions/dbObjects.js');
 
 module.exports = {
@@ -23,7 +23,7 @@ module.exports = {
 				  .setTitle(`Ticket Numbers!`)
 				  .setDescription(`Your numbers are: ${user.keno_numbers}`);
 
-			  await interaction.reply({ embeds: [ownedEmbed], ephemeral: true});
+			  await interaction.reply({ embeds: [ownedEmbed], flags: MessageFlags.Ephemeral});
         return;
       }
     }
@@ -31,7 +31,7 @@ module.exports = {
       .setTitle(`No Ticket`)
       .setDescription(`You do not own a ticket! Use /keno to purchase one!`);
 
-    await interaction.reply({ embeds: [noTicketEmbed], ephemeral: true});
+    await interaction.reply({ embeds: [noTicketEmbed], flags: MessageFlags.Ephemeral});
     return;
 	},
 };

@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('@discordjs/builders');
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const globals = require('../../helper/global_variables.js');
 
 module.exports = {
@@ -28,17 +28,17 @@ module.exports = {
 		if(action_option == 'reply'){
 			const old_percentage = globals.REPLY_CHANCE
 			globals.REPLY_CHANCE = action_percent*.01
-			interaction.reply({content:`Reply chance has been updated from ${old_percentage} to ${globals.REPLY_CHANCE}`,ephemeral:true})
+			interaction.reply({content:`Reply chance has been updated from ${old_percentage} to ${globals.REPLY_CHANCE}`,flags: MessageFlags.Ephemeral})
 		}
 		else if(action_option == 'yap'){
 			const old_percentage = globals.MESSAGE_CHANCE
 			globals.MESSAGE_CHANCE = action_percent*.01
-			interaction.reply({content:`Yap chance has been updated from ${old_percentage} to ${globals.MESSAGE_CHANCE}`,ephemeral:true})
+			interaction.reply({content:`Yap chance has been updated from ${old_percentage} to ${globals.MESSAGE_CHANCE}`,flags: MessageFlags.Ephemeral})
 		}
 		else{
 			const old_percentage = globals.POEM_CHANCE
 			globals.POEM_CHANCE = action_percent*.01
-			interaction.reply({content:`Poem chance has been updated from ${old_percentage} to ${globals.POEM_CHANCE}`,ephemeral:true})
+			interaction.reply({content:`Poem chance has been updated from ${old_percentage} to ${globals.POEM_CHANCE}`,flags: MessageFlags.Ephemeral})
 		}
 	},
 };

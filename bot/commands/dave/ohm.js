@@ -14,9 +14,9 @@ module.exports = {
         .setTitle('🙏 OOOOOOOHHHHHHHMMMMMMM 🧘')
         .setDescription(`🧊😎 <@${interaction.user.id}> wants <@${interaction.options.getUser('user').id}> to chill out! 🍹⛱️`)
 
-      let msg = await interaction.reply({ embeds: [ohmEmbed], fetchReply: true });
+      let msg = await interaction.reply({ embeds: [ohmEmbed], withResponse: true });
 
-      msg.react("👍");
-      msg.react("👎");
+      await msg.resource.message.react("👍");
+      await msg.resource.message.react("👎");
   },
 };

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+const { SlashCommandBuilder, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, MessageFlags } = require('discord.js');
 const { EmbedBuilder } = require('@discordjs/builders');
 const { Users } = require('../../DB/functions/dbObjects.js');
 
@@ -16,7 +16,7 @@ module.exports = {
 			    .setTitle(`Not Enough Karma!`)
 			    .setDescription(`You do not have enough Karma! You only have ${user.karma} Karma, but need 10 to create a DOTD!`);
 
-		    await interaction.reply({ embeds: [karmaEmbed], ephemeral: true});
+		    await interaction.reply({ embeds: [karmaEmbed], flags: MessageFlags.Ephemeral});
         }
         else{
             const modal = new ModalBuilder()

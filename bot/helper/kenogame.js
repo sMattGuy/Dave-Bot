@@ -5,7 +5,7 @@ async function process_keno(client){
   const payouts = [10,48,284,2000,9000,20000]
   const winning_numbers = await generate_numbers()
   
-  const winners = [];
+  const players = [];
   let any_players = false
 
   const currentDate = new Date()
@@ -23,9 +23,12 @@ async function process_keno(client){
           let matches = await count_matches(winning_numbers, user_numbers);
           if(matches >= 5){
             const payout = payouts[matches - 5];
-            winners.push([user.user_id,payout]);
+            players.push([user.user_id,payout]);
             user.karma += payout;
             await user.save()
+          }
+          else{
+            players.push([user.user_id,0]);
           }
         }
       }
@@ -37,11 +40,16 @@ async function process_keno(client){
       .setDescription(`${winning_numbers.toString()}`);
     const message_channel = await client.channels.fetch('119870239298027520').catch(() => {console.log('couldnt print winning numbers')})
     message_channel.send({embeds: [numbersEmbed]});
-    winners.forEach(
-      async (winner) => {
-        const user_dm = await client.users.fetch(winner[0]).catch(() => null);
+    players.forEach(
+      async (player) => {
+        const user_dm = await client.users.fetch(player[0]).catch(() => null);
         if(user_dm){
-          await user_dm.send(`Your Karma Keno ticket won! You got ${winner[1]} Karma!`).catch(() => {});
+          if(player[1] > 0){
+            await user_dm.send(`Your Karma Keno ticket won! You got ${player[1]} Karma!`).catch(() => {});
+          }
+          else{
+            await user_dm.send(`Your Karma Keno ticket lost! Try again soon!`).catch(() => {});
+          }
         }
         else{
           console.log('failed to dm user');

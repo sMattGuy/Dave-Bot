@@ -23,12 +23,12 @@ async function process_keno(client){
           let matches = await count_matches(winning_numbers, user_numbers);
           if(matches >= 5){
             const payout = payouts[matches - 5];
-            players.push([user.user_id,payout]);
+            players.push([user.user_id,payout,matches]);
             user.karma += payout;
             await user.save()
           }
           else{
-            players.push([user.user_id,0]);
+            players.push([user.user_id,0,matches]);
           }
         }
       }
@@ -45,10 +45,10 @@ async function process_keno(client){
         const user_dm = await client.users.fetch(player[0]).catch(() => null);
         if(user_dm){
           if(player[1] > 0){
-            await user_dm.send(`Your Karma Keno ticket won! You got ${player[1]} Karma!`).catch(() => {});
+            await user_dm.send(`Your Karma Keno ticket won with ${player[2]} matches! You got ${player[1]} Karma!`).catch(() => {});
           }
           else{
-            await user_dm.send(`Your Karma Keno ticket lost! Try again soon!`).catch(() => {});
+            await user_dm.send(`Your Karma Keno ticket had ${player[2]} matches! Try again soon!`).catch(() => {});
           }
         }
         else{

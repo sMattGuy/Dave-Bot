@@ -48,7 +48,7 @@ async function process_keno(client){
             await user_dm.send(`Your Karma Keno ticket won with ${player[2]} matches! You got ${player[1]} Karma!`).catch(() => {});
           }
           else{
-            await user_dm.send(`Your Karma Keno ticket had ${player[2]} matches! Try again soon!`).catch(() => {});
+            await user_dm.send(`Your Karma Keno ticket had ${player[2]} ${player[2]==1?"match":"matches"}! Try again soon!`).catch(() => {});
           }
         }
         else{

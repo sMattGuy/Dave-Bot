@@ -41,8 +41,9 @@ module.exports = {
     user.keno_numbers = picked_numbers.toString();
     user.keno_date = currentDate.toString();
 		await user.save();
-   
-    let hour_string = (currentDate.getHours()+1) % 12
+    
+    currentDate.setHours(currentDate.getHours() + 1)
+    let hour_string = currentDate.getHours() % 12
     hour_string = hour_string==0?12:hour_string
     const attachment = await makeTicket(picked_numbers.toString(),currentDate.getDay(),currentDate.getMonth(),currentDate.getDate(),`${hour_string}o'clock`)
     

@@ -20,7 +20,8 @@ module.exports = {
     const userKenoDate = new Date(user.keno_date)
     if(userKenoDate !== undefined){
       if(currentDate.getHours() == userKenoDate.getHours() && currentDate.getDate() == userKenoDate.getDate()){
-        let hour_string = (currentDate.getHours()+1) % 12
+        currentDate.setHours(currentDate.getHours() + 1);
+        let hour_string = currentDate.getHours() % 12
         hour_string = hour_string==0?12:hour_string
         const attachment = await makeTicket(user.keno_numbers,currentDate.getDay(),currentDate.getMonth(),currentDate.getDate(),`${hour_string}o'clock`)
 			  

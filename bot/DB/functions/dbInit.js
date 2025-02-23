@@ -25,16 +25,18 @@ const force = process.argv.includes('--force') || process.argv.includes('-f');
 const alter = process.argv.includes('--alter') || process.argv.includes('-a');
 
 sequelize.sync({ force, alter }).then(async () => {
-	const inputs = [];
-    for(const fortune_unit in fortune_data_formatted){
-        const final_fortune = fortune_data_formatted[fortune_unit].split('\t');
-        inputs.push(Fortunes.upsert({'text':final_fortune[0], 'author':final_fortune[1]}));
-    } 
-    for(const reply_unit in reply_data_formatted){
-        inputs.push(Replies.upsert({'text':reply_data_formatted[reply_unit]}));
-    } 
+  for(const fortune_unit in fortune_data_formatted){
+      const final_fortune = fortune_data_formatted[fortune_unit].split('\t');
+      try {
+        await Fortunes.findOrCreate({where: {'text':final_fortune[0], 'author':final_fortune[1]}});
+      } catch (error) {
+        console.log(`failed to enter: ${final_fortune[0]}, ${final_fortune[1]}`) 
+      }
+  } 
+  for(const reply_unit in reply_data_formatted){
+      await Replies.findOrCreate({where:{'text':reply_data_formatted[reply_unit]}});
+  } 
 
-	await Promise.all(inputs);
 	console.log('Database synced');
 
 	sequelize.close();

@@ -38,12 +38,18 @@ module.exports = {
         if(reacted_users.has(reaction.message.author.id)){
           return;
         }
-        const user = await Users.findOne({where:{user_id: reaction.message.author.id}});
+        let user = await Users.findOne({where:{user_id: reaction.message.author.id}});
+        if(!user){
+          user = await Users.create({user_id: reaction.message.author.id, karma: 10});
+        }
         user.karma += 1;
         user.save();
       }
       else if(reaction.emoji.id == downvote_id){
-        const user = await Users.findOne({where:{user_id: reaction.message.author.id}});
+        let user = await Users.findOne({where:{user_id: reaction.message.author.id}});
+        if(!user){
+          user = await Users.create({user_id: reaction.message.author.id, karma: 10});
+        }
         user.karma -= 1;
         user.save();
       }

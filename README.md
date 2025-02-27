@@ -9,6 +9,7 @@ A User can spend 10 of their Karma to create their own DOTD, which will be added
 |:---|:---|
 |/karma|Shows a users current Karma value.|
 |/spendkarma|Allows a user to spend 10 Karma to make a DOTD.|
+|/karmaboard|Shows a karma leaderboard.|
 ### Commands
 Dave bot can be directly interacted with using slash commands
 |Command|Description|
@@ -48,3 +49,5 @@ Dave bot can be interrupted by telling him to **shut up**, cancelling its action
 |Yap|Chance when another message is sent|Dave bot sends a random wikipedia summary.|
 |Respond|Chance when Dave is mentioned in chat|Dave bot will send a quick reply.|
 |Poem|Chance when another message is sent|Dave bot sends a random poem.|
+If a user reacts to another users message with the special DaveUpVote or DaveDownVote emote, the message author will get or lose karma.  
+If the author of the message tries reacting to the message, they will lock the message out of gaining karma, and it can only lose karma.

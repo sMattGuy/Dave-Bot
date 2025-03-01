@@ -19,6 +19,11 @@ Dave bot can be directly interacted with using slash commands
 |/ohm|Allows a user to query if another user is Zen.|
 |/ratedave|Allows everyone to rate Dave to estimate approval.|
 |/nycfc|Shows how NYCFC is doing in their current season.|
+### Karma Roulette
+Users can play roulette where Dave picks the numbers for you. Every bet type is available to play, and it costs a minimum of 2 Karma.
+|Command|Description|
+|:---|:---|
+|/roulette|Lets you play roulette, has required options for bet type and bet amount.|
 ### Karma Keno
 Users can play an hourly game of Karma Keno with their Karma. If any user plays Karma Keno, then at the start of every hour it will show the winning numbers and DM any users who won.  
 The paytable is as follows:

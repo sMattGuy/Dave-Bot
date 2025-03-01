@@ -1,4 +1,4 @@
-const { Events } = require('discord.js');
+const { Events, MessageFlags } = require('discord.js');
 const { Fortunes, Users } = require('../DB/functions/dbObjects.js');
 
 module.exports = {
@@ -8,13 +8,13 @@ module.exports = {
 			if(interaction.customId == 'newdotd' || interaction.customId == 'newdotdsp'){
 				if(interaction.customId == 'newdotdsp'){
 					const user = await Users.findOne({where:{user_id: interaction.user.id}});
-					user.karma -= 10;
+					user.karma -= Math.ceil(user.karma * .5) + 5;
 					await user.save();
 				}
 				const new_dotd = interaction.fields.getTextInputValue('wisdom');
 				const username = interaction.user.username;
 				await Fortunes.create({'text':new_dotd,'author':username});
-				await interaction.reply({content: 'Your new DOTD has been saved!',ephemeral: true})
+				await interaction.reply({content: 'Your new DOTD has been saved!', flags: MessageFlags.Ephemeral});
 			}
 			return;
 		}

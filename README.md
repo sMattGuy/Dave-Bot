@@ -10,6 +10,7 @@ A User can spend 10 of their Karma to create their own DOTD, which will be added
 |/karma|Shows a users current Karma value.|
 |/spendkarma|Allows a user to spend 10 Karma to make a DOTD.|
 |/karmaboard|Shows a karma leaderboard.|
+|/giftkarma|Lets you give karma to another user.|
 ### Commands
 Dave bot can be directly interacted with using slash commands
 |Command|Description|

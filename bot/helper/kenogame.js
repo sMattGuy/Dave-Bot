@@ -8,7 +8,7 @@ async function process_keno(client){
   const players = [];
   let any_players = false;
 
-  let winners = [{name:"No one!",amount:0},{name:"No one!",amount:0},{name:"No one!",amount:0}];
+  let winners = [["No one!",0],["No one!",],["No one!",0]];
   let winner_count = 0;
 
   const currentDate = new Date();
@@ -36,20 +36,20 @@ async function process_keno(client){
           else{
             username = user.user_id;
           }
-          if(payout > winners[0].amount){
+          if(payout > winners[0][1]){
             winners[2] = winners[1];
             winners[1] = winners[0];
-            winners[0].name = username;
-            winners[0].amount = payout;
+            winners[0][0] = username;
+            winners[0][1] = payout;
           }
           else if(payout > winners[1].amount){
             winners[2] = winners[1];
-            winners[1].name = username;
-            winners[1].amount = payout;
+            winners[1][0] = username;
+            winners[1][1] = payout;
           }
           else if(payout > winners[2].amount){
-            winners[2].name = username;
-            winners[2].amount = payout;
+            winners[2][0] = username;
+            winners[2][1] = payout;
           }
         }
         else{
@@ -65,7 +65,7 @@ async function process_keno(client){
       .setTitle(`This hours Karma Keno numbers are...`)
       .setDescription(`${winning_numbers.toString()}`)
       .addFields({name:'Results', value:`Of ${players.length} ${players.length==1?'player':'players'}, ${winner_count} won!`})
-      .addFields({name:'1st Place', value:winners[0].name, inline:true},{name:'2nd Place', value:winners[1].name, inline:true},{name:'3rd Place', value:winners[2].name, inline:true});
+      .addFields({name:'1st Place', value:winners[0][0], inline:true},{name:'2nd Place', value:winners[1][0], inline:true},{name:'3rd Place', value:winners[2][0], inline:true});
     const message_channel = await client.channels.fetch('119870239298027520').catch(() => {console.log('couldnt print winning numbers')})
     message_channel.send({embeds: [numbersEmbed]});
     for(let i=0;i<players.length;i++){

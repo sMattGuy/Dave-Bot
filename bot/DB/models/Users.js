@@ -23,7 +23,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: "",
       allowNull: false,
-    }
+    },
+    karma_penalty: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      allowNull: false,
+    },
 	}, {
 		timestamps: false,
 	});

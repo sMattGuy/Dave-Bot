@@ -16,6 +16,7 @@ module.exports = {
 				.addChoices(
 					{name: 'Karma',value:'karma'},
 					{name: 'Last Fortune',value:'last'},
+          {name: 'Penalty',value:'penalty'},
 				)
 				.setRequired(true))
 		.addIntegerOption(option =>
@@ -41,6 +42,10 @@ module.exports = {
 			user.last_fortune = value;
 			interaction.reply({content:`last fortune set to ${value}`,flags: MessageFlags.Ephemeral})
 		}
+    else if(topic == 'penalty'){
+      user.karma_penalty = value;
+			interaction.reply({content:`penalty set to ${value}`,flags: MessageFlags.Ephemeral})
+    }
 		else{
 			interaction.reply({content:`something went wrong`,flags: MessageFlags.Ephemeral})
 		}

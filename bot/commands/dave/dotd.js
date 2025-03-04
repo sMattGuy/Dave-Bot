@@ -13,8 +13,10 @@ module.exports = {
 		if(!user){
 			user = await Users.create({user_id: interaction.user.id, karma: 11, last_fortune: Date.now()});
 		}
-		
-    if(user.last_fortune + 32400000 >= Date.now()){
+	  
+    const penalty_time = 3600000;
+
+    if(user.last_fortune + penalty_time >= Date.now()){
       if(!user.karma_penalty){
         user.karma_penalty = 0;
         await user.save();
@@ -26,6 +28,11 @@ module.exports = {
       else{
         karma_penalty *= 2;
       }
+      
+      const timeleft = (user.last_fortune + penalty_time) - Date.now();
+      const secsLeft = Math.floor((timeleft/1000)%60)
+      const minsLeft = Math.floor((timeleft/(1000*60))%60)
+      const hoursLeft = Math.floor((timeleft/(1000*60*60))%24);
 
       const confirm_button = new ButtonBuilder()
         .setCustomId('confirmdotd')
@@ -42,7 +49,7 @@ module.exports = {
       
       const penaltyEmbed = new EmbedBuilder()
         .setTitle(`Karma Penalty will be applied!`)
-        .setDescription(`Using a DOTD now will incur a ${karma_penalty} Karma Penalty! Are you sure you want to accept another DOTD?`);
+        .setDescription(`Using a DOTD now will incur a ${karma_penalty} Karma Penalty! Are you sure you want to accept another DOTD? Your next penalty free DOTD is in ${hoursLeft}:${minsLeft}:${secsLeft}`);
 
       const response = await interaction.reply({embeds: [penaltyEmbed], components: [penalty_row], flags: MessageFlags.Ephemeral, withResponse: true});
       
@@ -58,7 +65,6 @@ module.exports = {
 		      user = await Users.findOne({where:{user_id: interaction.user.id}});
           user.karma_penalty = karma_penalty;
           user.karma += karma_penalty;
-          user.last_fortune = Date.now();
           await user.save();
           await displayDOTD(true);
           await generateTicket();

@@ -26,7 +26,7 @@ Users can play roulette where Dave picks the numbers for you. Every bet type is 
 |:---|:---|
 |/roulette|Lets you play roulette, has required options for bet type and bet amount.|
 ### Karma Keno
-Users can play an hourly game of Karma Keno with their Karma. If any user plays Karma Keno, then at the start of every hour it will show the winning numbers and DM any users who won.  
+Users can play an hourly game of Karma Keno with their Karma. If any user plays Karma Keno, then at the start of every hour it will show the winning numbers and DM any users who won. Keno tickets are given out when receiving a DOTD.  
 The paytable is as follows:
 |Hits|Payout|
 |:---|:---|
@@ -39,7 +39,6 @@ The paytable is as follows:
 
 |Command|Description|
 |:---|:---|
-|/keno|Purchases a Karma Keno ticket for 2 Karma.|
 |/checkticket|Shows the users numbers for their ticket.|
 ### Admin Commands
 Admins can use these commands to manage the bot

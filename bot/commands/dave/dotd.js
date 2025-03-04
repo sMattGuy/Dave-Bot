@@ -49,7 +49,7 @@ module.exports = {
       
       const penaltyEmbed = new EmbedBuilder()
         .setTitle(`Karma Penalty will be applied!`)
-        .setDescription(`Using a DOTD now will incur a ${karma_penalty} Karma Penalty! Are you sure you want to accept another DOTD? Your next penalty free DOTD is in ${hoursLeft}:${minsLeft}:${secsLeft}`);
+        .setDescription(`Using a DOTD now will incur a ${karma_penalty} Karma Penalty! Are you sure you want to accept another DOTD? Your next penalty free DOTD is in ${hoursLeft.toString().padStart(2,'0')}:${minsLeft.toString().padStart(2,'0')}:${secsLeft.toString().padStart(2,'0')}`);
 
       const response = await interaction.reply({embeds: [penaltyEmbed], components: [penalty_row], flags: MessageFlags.Ephemeral, withResponse: true});
       

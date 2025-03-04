@@ -14,7 +14,7 @@ module.exports = {
 			user = await Users.create({user_id: interaction.user.id, karma: 11, last_fortune: Date.now()});
 		}
 	  
-    const penalty_time = 3600000;
+    const penalty_time = 14400000;
 
     if(user.last_fortune + penalty_time >= Date.now()){
       if(!user.karma_penalty){

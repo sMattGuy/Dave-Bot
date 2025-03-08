@@ -15,6 +15,11 @@ module.exports = (sequelize, DataTypes) => {
 			defaultValue: 0,
 			allowNull: false,
 		},
+    author_id: {
+      type: DataTypes.STRING,
+      defaultValue: "0",
+      allowNull: false,
+    },
 	}, {
 		timestamps: false,
 	});

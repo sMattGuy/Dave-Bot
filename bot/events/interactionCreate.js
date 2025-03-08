@@ -8,12 +8,13 @@ module.exports = {
 			if(interaction.customId == 'newdotd' || interaction.customId == 'newdotdsp'){
 				if(interaction.customId == 'newdotdsp'){
 					const user = await Users.findOne({where:{user_id: interaction.user.id}});
-					user.karma -= Math.ceil(user.karma * .5) + 5;
+          const authored_count = Fortunes.count({where:{author_id: interaction.user.id}});
+					user.karma -= Math.ceil(user.karma * .5) + 5 + Math.floor(Math.pow(1.5, authored_count));
 					await user.save();
 				}
 				const new_dotd = interaction.fields.getTextInputValue('wisdom');
 				const username = interaction.user.username;
-				await Fortunes.create({'text':new_dotd,'author':username});
+				await Fortunes.create({'text':new_dotd,'author':username,'author_id':interaction.user.id});
 				await interaction.reply({content: 'Your new DOTD has been saved!', flags: MessageFlags.Ephemeral});
 			}
 			return;

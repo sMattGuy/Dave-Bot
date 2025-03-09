@@ -8,7 +8,7 @@ async function process_keno(client){
   const players = [];
   let any_players = false;
 
-  let winners = [["No one!",0],["No one!",],["No one!",0]];
+  let winners = [["No one!",0],["No one!",0],["No one!",0]];
   let winner_count = 0;
 
   const currentDate = new Date();
@@ -37,17 +37,17 @@ async function process_keno(client){
             username = user.user_id;
           }
           if(payout > winners[0][1]){
-            winners[2] = winners[1];
-            winners[1] = winners[0];
+            winners[2] = winners[1].slice(0,2);
+            winners[1] = winners[0].slice(0,2);
             winners[0][0] = username;
             winners[0][1] = payout;
           }
-          else if(payout > winners[1].amount){
-            winners[2] = winners[1];
+          else if(payout > winners[1][1]){
+            winners[2] = winners[1].slice(0,2);
             winners[1][0] = username;
             winners[1][1] = payout;
           }
-          else if(payout > winners[2].amount){
+          else if(payout > winners[2][1]){
             winners[2][0] = username;
             winners[2][1] = payout;
           }

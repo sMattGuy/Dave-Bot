@@ -65,7 +65,7 @@ async function process_keno(client){
       .setTitle(`This hours Karma Keno numbers are...`)
       .setDescription(`${winning_numbers.toString()}`)
       .addFields({name:'Results', value:`Of ${players.length} ${players.length==1?'player':'players'}, ${winner_count} won!`})
-      .addFields({name:'1st Place', value:winners[0][0], inline:true},{name:'2nd Place', value:winners[1][0], inline:true},{name:'3rd Place', value:winners[2][0], inline:true});
+      .addFields({name:'1st Place', value:`${winners[0][0]}, ${winners[0][1]}K`, inline:true},{name:'2nd Place', value:`${winners[1][0]}, ${winners[1][1]}K`, inline:true},{name:'3rd Place', value:`${winners[2][0]}, ${winners[2][1]}K`, inline:true});
     const message_channel = await client.channels.fetch('119870239298027520').catch(() => {console.log('couldnt print winning numbers')})
     message_channel.send({embeds: [numbersEmbed]});
     for(let i=0;i<players.length;i++){

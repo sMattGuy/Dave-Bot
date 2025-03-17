@@ -13,7 +13,11 @@ module.exports = {
     ),
 	async execute(interaction) {
     let user_option = interaction.options.getUser('user') ?? interaction.user;
-
+    if(user_option.bot){
+      const errorEmbed = new EmbedBuilder()
+        .setTitle(`Bots have already escaped Samsara!`)
+		  return interaction.reply({ embeds: [errorEmbed], flags: MessageFlags.Ephemeral});
+    }
     let user = await Users.findOne({where:{user_id: user_option.id}});
 		if(!user){
 			user = await Users.create({user_id: user_option.id, karma: 10});

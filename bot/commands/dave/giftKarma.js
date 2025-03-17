@@ -19,6 +19,14 @@ module.exports = {
         .setRequired(true)),
   async execute(interaction) {
     let gift_getter_user = interaction.options.getUser('user');
+    if(gift_getter_user.bot){
+			const botEmbed = new EmbedBuilder()
+				.setTitle(`Cant gift bots!`)
+				.setDescription(`Bots already escaped Samsara!`);
+!
+			await interaction.reply({ embeds: [botEmbed], flags: MessageFlags.Ephemeral});
+      return
+    }
     if(interaction.user.id == gift_getter_user.id){
 			const selfEmbed = new EmbedBuilder()
 				.setTitle(`Cant gift yourself!`)

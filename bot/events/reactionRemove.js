@@ -34,6 +34,9 @@ module.exports = {
     }
     if(reaction.message.author.id != process.env.CLIENTID){
       const reacted_users = await reaction.users.fetch()
+      if(reaction.message.author.bot){
+        return;
+      }
       if(reaction.emoji.id == upvote_id){
         let user = await Users.findOne({where:{user_id: reaction.message.author.id}});
         if(!user){

@@ -28,7 +28,9 @@ module.exports = {
 		const userobj = interaction.options.getUser('user');
 		const topic = interaction.options.getString('topic');
 		const value = interaction.options.getInteger('value');
-
+    if(userobj.bot){
+			return interaction.reply({content:`bot user selected, canceling`,flags: MessageFlags.Ephemeral})
+    }
 		let user = await Users.findOne({where:{user_id: userobj.id}});
 		if(!user){
 			user = await Users.create({user_id: userobj.id, karma: 10});

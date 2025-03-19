@@ -123,10 +123,12 @@ module.exports = {
         await msg.resource.message.react("👍");
         await msg.resource.message.react("👎");
       }
-			if(user.karma >= 10){
-				const karmaEmbed = new EmbedBuilder()
+      let authored_count = await Fortunes.count({where:{author_id: interaction.user.id}});
+      let karma_cost = Math.ceil(user.karma * .5) + 5 + Math.floor(Math.pow(1.5,authored_count));
+      if(user.karma >= karma_cost){
+        const karmaEmbed = new EmbedBuilder()
 					.setTitle(`You have enough Karma to make a DOTD!`)
-					.setDescription(`You currently have ${user.karma} karma! Use /spendkarma to create a DOTD!`);
+					.setDescription(`You currently have ${user.karma} karma! Use /spendkarma to use ${karma_cost} to create a DOTD!`);
 				await interaction.followUp({embeds: [karmaEmbed], flags: MessageFlags.Ephemeral});
 			}
     }

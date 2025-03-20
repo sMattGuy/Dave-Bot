@@ -71,6 +71,9 @@ module.exports = {
     else if(user_karma_ratio < 4.0){
       karma_standing = 'Arahant';
     }
+    else{
+      karma_standing = 'Escaping Samsara';
+    }
     
     let karma_cost = Math.ceil(user.karma * .5) + 5 + Math.floor(Math.pow(1.5,fortunes_authored));
 

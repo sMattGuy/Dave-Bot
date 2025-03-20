@@ -8,10 +8,12 @@ module.exports = {
 		.setName('karmaboard')
 		.setDescription("Shows the most and least karmatic people!"),
 	async execute(interaction) {
-    const users = await Users.findAll({order: [['karma', 'DESC']]})
-    
+    const users = await Users.findAll({order: [['karma', 'DESC']]});
+    const existing_karma = await Users.sum('karma');    
+
     const boardGoodEmbed = new EmbedBuilder()
       .setTitle(`The most Karmatic people are:`)
+      .setDescription(`There is **${existing_karma} Karma** flowing through everyone...`)
 
     const boardBadEmbed = new EmbedBuilder()
       .setTitle(`The least Karmatic people are:`)

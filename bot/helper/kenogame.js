@@ -25,9 +25,10 @@ async function process_keno(client){
         const user_numbers = user.keno_numbers.split(",");
         let matches = await count_matches(winning_numbers, user_numbers);
         if(matches >= 5){
+          user.loss_count = 0;
           winner_count += 1;
           const payout = payouts[matches - 5];
-          players.push([user.user_id,payout,matches]);
+          players.push([user.user_id,payout,matches,0]);
           user.karma += payout;
           let username = await client.users.fetch(user.user_id).catch(() => null);
           if(username){
@@ -53,7 +54,11 @@ async function process_keno(client){
           }
         }
         else{
-          players.push([user.user_id,0,matches]);
+          user.loss_count += 1;
+          if(user.loss_count >= 10){
+            user.karma += Math.floor(user.loss_count/10);
+          }
+          players.push([user.user_id,0,matches,user.loss_count]);
         }
         user.keno_date = 0;
         await user.save();
@@ -77,6 +82,10 @@ async function process_keno(client){
         }
         else{
           await user_dm.send(`Your Karma Keno ticket had ${player[2]} ${player[2]==1?"match":"matches"}! Try again soon!`).catch(() => {});
+          if(player[3] >= 10){
+            const karma_gift = Math.floor(player[3]/10);
+            await user_dm.send(`You've lost ${player[3]} times in a row! Here's ${karma_gift} Karma for your troubles.`).catch(() => {});
+          }
         }
       }
       else{

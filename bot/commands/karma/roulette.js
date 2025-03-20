@@ -1,6 +1,7 @@
 const { EmbedBuilder } = require('@discordjs/builders');
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { Users } = require('../../DB/functions/dbObjects.js');
+const { makeTable } = require('../../helper/roulette_table.js');
 
 // -1 is 00
 const single_wins = [[-1],[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11],[12],[13],[14],[15],[16],[17],[18],[19],[20],[21],[22],[23],[24],[25],[26],[27],[28],[29],[30],[31],[32],[33],[34],[35],[36]]
@@ -104,13 +105,15 @@ module.exports = {
     
     let roulette_number = randomBetween(-1,36);
 
+    let table_picture = await makeTable(user_numbers_choice,roulette_number);
+
     if(user_numbers_choice.includes(roulette_number)){
       user.karma += (bet_amount * bet_mult_array_match[bet_type]) + bet_amount;
 			const winEmbed = new EmbedBuilder()
 				.setTitle(`Your bet hits!`)
 				.setDescription(`Dave picked the numbers ${user_numbers_choice} for you, and ${roulette_number} hit! You won ${bet_amount * bet_mult_array_match[bet_type]} Karma!`);
       await user.save();
-			await interaction.reply({ embeds: [winEmbed] });
+			await interaction.reply({ files: [table_picture], embeds: [winEmbed] });
       return
     }
     else{
@@ -118,7 +121,7 @@ module.exports = {
 				.setTitle(`Your bet fails!`)
 				.setDescription(`Dave picked the numbers ${user_numbers_choice} for you, and the machine hit ${roulette_number}! Better luck next time!`);
       await user.save();
-			await interaction.reply({ embeds: [loseEmbed] });
+			await interaction.reply({ files: [table_picture], embeds: [loseEmbed] });
       return
     }
 	},

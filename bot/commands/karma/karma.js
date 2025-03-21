@@ -76,11 +76,12 @@ module.exports = {
     }
     
     let karma_cost = Math.ceil(user.karma * .5) + 5 + Math.floor(Math.pow(1.5,fortunes_authored));
-
+    
+    const lose_streak = user.loss_count;
 		const karmaEmbed = new EmbedBuilder()
 			.setTitle(`${user_option.username} Karmatic Stats`)
       .setDescription(`Current Karma: ${user.karma}`)
-      .addFields({name:`DOTD Authored`,value:`${fortunes_authored}`,inline:true},{name:'Create DOTD Cost',value:`${karma_cost} Karma`,inline: true},{name:`Karmatic Standing`,value:`${karma_standing}`})
+      .addFields({name:`DOTD Authored`,value:`${fortunes_authored}`,inline:true},{name:'Create DOTD Cost',value:`${karma_cost} Karma`,inline: true},{name:`Karmatic Standing`,value:`${karma_standing}`},{name:`Keno Loss Streak`,value:`${lose_streak} ${lose_streak==1?"Game Lost":"Games Lost"}`})
 
 		await interaction.reply({ embeds: [karmaEmbed] });
 	},

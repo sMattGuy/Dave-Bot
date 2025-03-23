@@ -15,10 +15,10 @@ async function makeTable(numbers, winning_number){
   for(i=0;i<numbers.length;i++){
     let number = numbers[i];
     if(number == 0){
-      context.drawImage(dave_icon,30,160,30,30);
+      context.drawImage(dave_icon,20,160,45,64);
     }
     else if(number == -1){
-      context.drawImage(dave_icon,30,100,30,30);
+      context.drawImage(dave_icon,20,80,45,64);
     }
     else{
       let x_offset = Math.ceil(number /3) - 1
@@ -30,10 +30,10 @@ async function makeTable(numbers, winning_number){
         y_offset = 2;
       }
 
-      let x_position = 75 + (x_offset * 45.5);
-      let y_position = 65 + (y_offset * 65);
+      let x_position = 66 + (x_offset * 45.75);
+      let y_position = 54 + (y_offset * 66);
 
-      context.drawImage(dave_icon,x_position,y_position,30,30);
+      context.drawImage(dave_icon,x_position,y_position,45,64);
     }
   }
   
@@ -49,17 +49,17 @@ async function makeTable(numbers, winning_number){
     y_offset = 2;
   }
 
-  let x_position = 75 + (x_offset * 45.5);
-  let y_position = 65 + (y_offset * 65);
+  let x_position = 66 + (x_offset * 45.75);
+  let y_position = 54 + (y_offset * 66);
   
   if(winning_number == 0){
-    context.fillRect(30,160,30,50);
+    context.fillRect(20,160,45,64);
   }
   else if(winning_number == -1){
-    context.fillRect(30,100,30,50);
+    context.fillRect(20,80,45,64);
   }
   else{
-    context.fillRect(x_position,y_position,30,50)
+    context.fillRect(x_position,y_position,45,64)
   }
 
   const attachment = new AttachmentBuilder(await canvas.encode('png'), { name: 'keno-ticket.png' });

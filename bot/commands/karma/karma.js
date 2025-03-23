@@ -15,6 +15,7 @@ module.exports = {
     let user_option = interaction.options.getUser('user') ?? interaction.user;
     if(user_option.bot){
       const errorEmbed = new EmbedBuilder()
+        .setColor(0x47009c)
         .setTitle(`Bots have already escaped Samsara!`)
 		  return interaction.reply({ embeds: [errorEmbed], flags: MessageFlags.Ephemeral});
     }
@@ -79,6 +80,7 @@ module.exports = {
     
     const lose_streak = user.loss_count;
 		const karmaEmbed = new EmbedBuilder()
+      .setColor(0x009c2c)
 			.setTitle(`${user_option.username} Karmatic Stats`)
       .setDescription(`Current Karma: ${user.karma}`)
       .addFields({name:`DOTD Authored`,value:`${fortunes_authored}`,inline:true},{name:'Create DOTD Cost',value:`${karma_cost} Karma`,inline: true},{name:`Karmatic Standing`,value:`${karma_standing}`},{name:`Keno Loss Streak`,value:`${lose_streak} ${lose_streak==1?"Game Lost":"Games Lost"}`})

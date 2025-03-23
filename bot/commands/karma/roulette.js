@@ -91,6 +91,7 @@ module.exports = {
 		const bet_amount = interaction.options.getInteger('amount');
     if(user.karma < bet_amount){
 			const poorEmbed = new EmbedBuilder()
+        .setColor(0x47009c)
 				.setTitle(`Not Enough Karma!`)
 				.setDescription(`You cannot afford that bet! You only have ${user.karma} Karma!`);
 
@@ -110,6 +111,7 @@ module.exports = {
     if(user_numbers_choice.includes(roulette_number)){
       user.karma += (bet_amount * bet_mult_array_match[bet_type]) + bet_amount;
 			const winEmbed = new EmbedBuilder()
+        .setColor(0x9c5b00)
 				.setTitle(`Your bet hits!`)
 				.setDescription(`Dave picked the numbers ${user_numbers_choice} for you, and ${roulette_number} hit! You won ${bet_amount * bet_mult_array_match[bet_type]} Karma!`);
       await user.save();
@@ -118,6 +120,7 @@ module.exports = {
     }
     else{
 			const loseEmbed = new EmbedBuilder()
+        .setColor(0x47009c)
 				.setTitle(`Your bet fails!`)
 				.setDescription(`Dave picked the numbers ${user_numbers_choice} for you, and the machine hit ${roulette_number}! Better luck next time!`);
       await user.save();

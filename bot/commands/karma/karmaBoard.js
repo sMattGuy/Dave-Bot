@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('@discordjs/builders');
 const { SlashCommandBuilder, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, MessageFlags } = require('discord.js');
-const { Users } = require('../../DB/functions/dbObjects.js');
+const { Users, Fortunes } = require('../../DB/functions/dbObjects.js');
 const { Sequelize } = require('sequelize');
 
 module.exports = {
@@ -10,13 +10,34 @@ module.exports = {
 	async execute(interaction) {
     const users = await Users.findAll({order: [['karma', 'DESC']]});
     const existing_karma = await Users.sum('karma');    
+    
+    const dotd_count = await Fortunes.findAll({group:['author_id'],attributes:['author_id',[Sequelize.fn('COUNT','author_id'),'authored_count']],order:[['authored_count','DESC']]});
+
+    const top_authors = []
+    for(i=0;i<dotd_count.length;i++){
+      if(dotd_count[i].author_id == 0){
+        continue;
+      }
+      else{
+        top_authors.push([dotd_count[i].author_id,dotd_count[i].dataValues.authored_count])
+      }
+      if(top_authors.length >= 3){
+        break;
+      }
+    }
 
     const boardGoodEmbed = new EmbedBuilder()
+      .setColor(0x9c5b00)
       .setTitle(`The most Karmatic people are:`)
       .setDescription(`There is **${existing_karma} Karma** flowing through everyone...`)
 
     const boardBadEmbed = new EmbedBuilder()
+      .setColor(0x47009c)
       .setTitle(`The least Karmatic people are:`)
+    
+    const authoredBoard = new EmbedBuilder()
+      .setColor(0x009c2c)
+      .setTitle(`Most DOTD's Authored:`)
 
     if(users.length > 0){
       let good_user = await interaction.client.users.fetch(users[0].user_id).catch(() => null);
@@ -56,6 +77,18 @@ module.exports = {
       boardBadEmbed.addDescription(`No one has any karma yet!`);
     }
 
-    interaction.reply({ embeds: [boardGoodEmbed, boardBadEmbed] });
+    if(top_authors.length >= 3){
+      let first_author = await interaction.client.users.fetch(top_authors[0][0]).catch(() => null);
+      authoredBoard.addFields({name: `1st. ${first_author!=null?first_author.username:'Mystery'}`, value: `${top_authors[0][1]} ${top_authors[0][1]==1?'DOTD':'DOTD\'s'}`, inline: true});
+      let second_author = await interaction.client.users.fetch(top_authors[1][0]).catch(() => null);
+      authoredBoard.addFields({name: `2nd. ${second_author!=null?second_author.username:'Mystery'}`, value: `${top_authors[1][1]} ${top_authors[1][1]==1?'DOTD':'DOTD\'s'}`, inline: true});
+      let third_author = await interaction.client.users.fetch(top_authors[2][0]).catch(() => null);
+      authoredBoard.addFields({name: `3rd. ${third_author!=null?third_author.username:'Mystery'}`, value: `${top_authors[2][1]} ${top_authors[2][1]==1?'DOTD':'DOTD\'s'}`, inline: true});
+    }
+    else{
+      authoredBoard.addDescription(`Not enough authored DOTD's have been made!`);
+    }
+
+    interaction.reply({ embeds: [boardGoodEmbed, boardBadEmbed, authoredBoard] });
 	},
 };

@@ -15,6 +15,7 @@ module.exports = {
     let karma_cost = Math.ceil(user.karma * .5) + 5 + Math.floor(Math.pow(1.5,authored_count));
     if(user.karma < karma_cost){
       const karmaEmbed = new EmbedBuilder()
+        .setColor(0x47009c)
         .setTitle(`Not Enough Karma!`)
         .setDescription(`You do not have enough Karma! You only have ${user.karma} Karma, but need ${karma_cost} Karma to create a DOTD!`);
       await interaction.reply({ embeds: [karmaEmbed], flags: MessageFlags.Ephemeral});

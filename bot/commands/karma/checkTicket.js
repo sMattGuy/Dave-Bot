@@ -26,6 +26,7 @@ module.exports = {
         const attachment = await makeTicket(user.keno_numbers,currentDate.getDay(),currentDate.getMonth(),currentDate.getDate(),`${hour_string}o'clock`)
 			  
         const ownedEmbed = new EmbedBuilder()
+          .setColor(0x009c2c)
 				  .setTitle(`Ticket Numbers for ${hour_string} o'clock!`)
 				  .setDescription(`Your numbers are: ${user.keno_numbers}`);
 
@@ -34,8 +35,9 @@ module.exports = {
       }
     }
     const noTicketEmbed = new EmbedBuilder()
+      .setColor(0x47009c)
       .setTitle(`No Ticket`)
-      .setDescription(`You do not own a ticket! Use /keno to purchase one!`);
+      .setDescription(`You do not own a ticket! Use /dotd to get one!`);
 
     await interaction.reply({ embeds: [noTicketEmbed], flags: MessageFlags.Ephemeral});
     return;

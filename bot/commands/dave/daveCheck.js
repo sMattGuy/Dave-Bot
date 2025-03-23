@@ -7,7 +7,7 @@ module.exports = {
     .setDescription("🎉 Are we rockin wit Dave?? 🎉"),
   async execute(interaction) {
       const rateEmbed = new EmbedBuilder().setTitle("Do you rock wit Dave? 🧐");
-
+      rateEmbed.setColor(0x009c2c)
       let msg = await interaction.reply({ embeds: [rateEmbed], withResponse: true });
 
       msg.resource.message.react("👍");

@@ -14,6 +14,7 @@ module.exports = {
     const year_word = (years == 1) ? "Year" : "Years";
     const week_word = (weeks == 1) ? "Week" : "Weeks";
     const daveEmbed = new EmbedBuilder()
+    daveEmbed.setColor(0x009c2c)
     if(weeks == 0){
       daveEmbed.setTitle(`⏱ ~${years} ${year_word}~ ⏱`)
     }

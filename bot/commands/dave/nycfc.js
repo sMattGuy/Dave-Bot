@@ -10,6 +10,7 @@ module.exports = {
 		.setDescription("⚽ NYCFC team stats and tickets ⚽"),
 	async execute(interaction) {
         const loadingEmbed = new EmbedBuilder()
+            .setColor(0x9fd2ff)
             .setTitle(`🔵 🟠 NYCFC Stats ⚽ 🥅`)
             .setDescription('Loading NYCFC stats, try again in 10 seconds.\nIf the problem persists, contact administration.')
             .setURL('https://www.newyorkcityfc.com/')
@@ -20,11 +21,6 @@ module.exports = {
         }
 
         const {pastMatches, upcomingMatches} = await getMatchData();
-        /* Testing Logs
-        console.log(pastMatches);
-        console.log('--------------------------------------------------------------')
-        console.log(upcomingMatches);
-        */
 
         const nycFields = [];
 
@@ -89,6 +85,7 @@ module.exports = {
             );
 
         const nycfcEmbed = new EmbedBuilder()
+            .setColor(0x9fd2ff)
             .setTitle(`🔵 🟠 NYCFC Stats ⚽ 🥅`)
             .setDescription('‼️ Dale New York ‼️')
             .setColor([159,210,255])

@@ -48,6 +48,7 @@ module.exports = {
         .addComponents(confirm_button, cancel_button);
       
       const penaltyEmbed = new EmbedBuilder()
+        .setColor(0x47009c)
         .setTitle(`Karma Penalty will be applied!`)
         .setDescription(`Using a DOTD now will incur a ${karma_penalty} Karma Penalty! Are you sure you want to accept another DOTD? Your next penalty free DOTD is in ${hoursLeft.toString().padStart(2,'0')}:${minsLeft.toString().padStart(2,'0')}:${secsLeft.toString().padStart(2,'0')}`);
 
@@ -59,6 +60,7 @@ module.exports = {
         const confirmation = await response.resource.message.awaitMessageComponent({filter: collectorFilter, time: 60_000});
         if(confirmation.customId === 'confirmdotd'){
           const acceptEmbed = new EmbedBuilder()
+            .setColor(0x47009c)
             .setTitle(`Penalty Accepted`)
             .setDescription(`So be it.`);
           await interaction.editReply({embeds: [acceptEmbed], components: []})
@@ -72,6 +74,7 @@ module.exports = {
         }
         else{
           const timeoutEmbed = new EmbedBuilder()
+            .setColor(0x47009c)
             .setTitle(`DOTD ignored...`)
             .setDescription(`Come back later for a DOTD.`);
           await interaction.editReply({embeds: [timeoutEmbed], components: []})
@@ -79,6 +82,7 @@ module.exports = {
       } catch(error) {
           console.error(error);
           const timeoutEmbed = new EmbedBuilder()
+            .setColor(0x47009c)
             .setTitle(`DOTD ignored...`)
             .setDescription(`Come back later for a DOTD.`);
           await interaction.editReply({embeds: [timeoutEmbed], components: []})
@@ -111,6 +115,7 @@ module.exports = {
 			}
 			let selected_fortune = selection_array[Math.floor(Math.random()*selection_array.length)];
 			const dotdEmbed = new EmbedBuilder()
+        .setColor(0x9c5b00)
 				.setTitle(`#${selected_fortune.id}: "${selected_fortune.text}"`)
 				.setDescription(`\\- ${selected_fortune.author}`);
       
@@ -127,6 +132,7 @@ module.exports = {
       let karma_cost = Math.ceil(user.karma * .5) + 5 + Math.floor(Math.pow(1.5,authored_count));
       if(user.karma >= karma_cost){
         const karmaEmbed = new EmbedBuilder()
+          .setColor(0x009c2c)
 					.setTitle(`You have enough Karma to make a DOTD!`)
 					.setDescription(`You currently have ${user.karma} karma! Use /spendkarma to use ${karma_cost} to create a DOTD!`);
 				await interaction.followUp({embeds: [karmaEmbed], flags: MessageFlags.Ephemeral});
@@ -170,6 +176,7 @@ module.exports = {
       const attachment = await makeTicket(picked_numbers.toString(),currentDate.getDay(),currentDate.getMonth(),currentDate.getDate(),`${hour_string}o'clock`)
       
       const successEmbed = new EmbedBuilder()
+        .setColor(0x009c2c)
         .setTitle(`${interaction.user.displayName} got a ${hour_string} o'clock Karma Keno Ticket with their DOTD!`)
         .setDescription(`Your numbers are: ${picked_numbers.toString()}`);
 

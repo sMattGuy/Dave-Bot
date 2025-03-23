@@ -21,14 +21,16 @@ module.exports = {
     let gift_getter_user = interaction.options.getUser('user');
     if(gift_getter_user.bot){
 			const botEmbed = new EmbedBuilder()
+        .setColor(0x47009c)
 				.setTitle(`Cant gift bots!`)
 				.setDescription(`Bots already escaped Samsara!`);
-!
+
 			await interaction.reply({ embeds: [botEmbed], flags: MessageFlags.Ephemeral});
       return
     }
     if(interaction.user.id == gift_getter_user.id){
 			const selfEmbed = new EmbedBuilder()
+        .setColor(0x47009c)
 				.setTitle(`Cant gift yourself!`)
 				.setDescription(`You cannot gift yourself!`);
 
@@ -44,6 +46,7 @@ module.exports = {
     const gift_amount = interaction.options.getInteger('amount');
     if(user.karma < gift_amount){
 			const poorEmbed = new EmbedBuilder()
+        .setColor(0x47009c)
 				.setTitle(`Not Enough Karma!`)
 				.setDescription(`You cannot afford that gift! You only have ${user.karma} Karma!`);
 
@@ -63,6 +66,7 @@ module.exports = {
     await gift_getter.save();
 
     const giftEmbed = new EmbedBuilder()
+      .setColor(0x9c5b00)
       .setTitle(`${interaction.user.username} gifted ${gift_amount} Karma to ${gift_getter_user.username}`)
       .setImage(gift_image);
 

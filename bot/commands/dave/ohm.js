@@ -11,6 +11,7 @@ module.exports = {
         .setRequired(true)),
   async execute(interaction) {
       const ohmEmbed = new EmbedBuilder()
+        .setColor(0x009c2c)
         .setTitle('🙏 OOOOOOOHHHHHHHMMMMMMM 🧘')
         .setDescription(`🧊😎 <@${interaction.user.id}> wants <@${interaction.options.getUser('user').id}> to chill out! 🍹⛱️`)
 

@@ -67,6 +67,7 @@ async function process_keno(client){
   }
   if(any_players){
     const numbersEmbed = new EmbedBuilder()
+      .setColor(0x9c5b00)
       .setTitle(`This hours Karma Keno numbers are...`)
       .setDescription(`${winning_numbers.toString()}`)
       .addFields({name:'Results', value:`Of ${players.length} ${players.length==1?'player':'players'}, ${winner_count} won!`})

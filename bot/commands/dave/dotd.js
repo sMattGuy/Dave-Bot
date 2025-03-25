@@ -117,7 +117,8 @@ module.exports = {
 			const dotdEmbed = new EmbedBuilder()
         .setColor(0x9c5b00)
 				.setTitle(`#${selected_fortune.id}: "${selected_fortune.text}"`)
-				.setDescription(`\\- ${selected_fortune.author}`);
+				.setDescription(`\\- ${selected_fortune.author}`)
+        .setFooter({text:`Fortune Rating: ${selected_fortune.rating}`});
       
 			let msg = ""
       if(followup){

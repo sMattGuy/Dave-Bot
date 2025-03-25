@@ -1,4 +1,5 @@
 const { Events } = require('discord.js');
+const { EmbedBuilder } = require('@discordjs/builders');
 const { Users, Fortunes } = require('../DB/functions/dbObjects.js')
 
 const upvote_id = 1344451256449765399;
@@ -28,6 +29,12 @@ module.exports = {
           else if(reaction.emoji.name == "👎"){
               fortune_found.rating++;
           }
+          const updated_embed = new EmbedBuilder()
+            .setColor(0x9c5b00)
+            .setTitle(`#${fortune_found.id}: "${fortune_found.text}"`)
+            .setDescription(`\\- ${fortune_found.author}`)
+            .setFooter({text:`Fortune Rating: ${fortune_found.rating}`});
+          reaction.message.edit({embeds:[updated_embed]})
           fortune_found.save();
         }
       } 

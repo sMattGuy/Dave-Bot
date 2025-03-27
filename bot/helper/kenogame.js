@@ -92,7 +92,23 @@ async function process_keno(client){
         }
       }
       if(username_list.length != 0){
-        numbersEmbed.setFooter({text:`${username_list.toString()} ${username_list.length==1?"was":"were"} the closest with ${best_score} matches!`})
+        let footer_text = "";
+        for(let i=0;i<3;i++){
+          if(i == username_list.length){
+            break;
+          }
+          if(i == 0){
+            footer_text = username_list[i];
+          }
+          else{
+            footer_text += `, ${username_list[i]}`;
+          }
+        }
+        if(username_list.length > 3){
+          footer_text += ` and ${username_list.length - 3} others`;
+        }
+        footer_text += ` ${username_list.length==1?"was":"were"} the closest with ${best_score} ${best_score==1?"match":"matches"}!`;
+        numbersEmbed.setFooter({text:footer_text});
       }
     }
     const message_channel = await client.channels.fetch('119870239298027520').catch(() => {console.log('couldnt print winning numbers')})

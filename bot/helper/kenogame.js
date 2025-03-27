@@ -72,6 +72,29 @@ async function process_keno(client){
       .setDescription(`${winning_numbers.toString()}`)
       .addFields({name:'Results', value:`Of ${players.length} ${players.length==1?'player':'players'}, ${winner_count} won!`})
       .addFields({name:'1st Place', value:`${winners[0][0]}, ${winners[0][1]} Karma`, inline:true},{name:'2nd Place', value:`${winners[1][0]}, ${winners[1][1]} Karma`, inline:true},{name:'3rd Place', value:`${winners[2][0]}, ${winners[2][1]} Karma`, inline:true});
+    if(winner_count == 0){
+      let best_player = [];
+      let best_score = -1;
+      for(let i=0;i<players.length;i++){
+        if(players[i][2] > best_score){
+          best_score = players[i][2];
+          best_player = [players[i][0]];
+        }
+        else if(players[i][2] == best_score){
+          best_player.push(players[i][0]);
+        }
+      }
+      let username_list = [];
+      for(let i=0;i<best_player.length;i++){
+        let user_found = await client.users.fetch(best_player[i]).catch(() => null);
+        if(user_found){
+          username_list.push(user_found.username);
+        }
+      }
+      if(username_list.length != 0){
+        numbersEmbed.setFooter({text:`${username_list.toString()} ${username_list.length==1?"was":"were"} the closest with ${best_score} matches!`})
+      }
+    }
     const message_channel = await client.channels.fetch('119870239298027520').catch(() => {console.log('couldnt print winning numbers')})
     message_channel.send({embeds: [numbersEmbed]});
     for(let i=0;i<players.length;i++){

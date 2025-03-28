@@ -67,6 +67,9 @@ module.exports = {
 		      user = await Users.findOne({where:{user_id: interaction.user.id}});
           user.karma_penalty = karma_penalty;
           user.karma += karma_penalty;
+          if(user.karma < -100000){
+            user.karma = -100000;
+          }
           user.last_fortune += Math.floor(penalty_time/2);
           await user.save();
           await displayDOTD(true);

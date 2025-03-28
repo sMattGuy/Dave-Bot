@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('@discordjs/builders');
 const { SlashCommandBuilder, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, MessageFlags } = require('discord.js');
 const { Users, Fortunes } = require('../../DB/functions/dbObjects.js');
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,7 +9,7 @@ module.exports = {
 		.setDescription("Shows the most and least karmatic people!"),
 	async execute(interaction) {
     const users = await Users.findAll({order: [['karma', 'DESC']]});
-    const existing_karma = await Users.sum('karma');    
+    const existing_karma = await Users.sum('karma',{where: { karma: { [Op.gte]: 0 } }});    
     
     const dotd_count = await Fortunes.findAll({group:['author_id'],attributes:['author_id',[Sequelize.fn('COUNT','author_id'),'authored_count']],order:[['authored_count','DESC']]});
 

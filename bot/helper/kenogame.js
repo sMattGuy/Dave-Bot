@@ -20,7 +20,10 @@ async function process_keno(client){
     let user = users[i];  
     const userKenoDate = new Date(user.keno_date);
     if(userKenoDate !== undefined){
-      if(currentDate.getHours() == userKenoDate.getHours() && currentDate.getDate() == userKenoDate.getDate()){
+      const monthCheck = userKenoDate.getMonth() == currentDate.getMonth();
+      const dateCheck = userKenoDate.getDate() == currentDate.getDate();
+      const hourCheck = userKenoDate.getHours() == currentDate.getHours();
+      if(hourCheck && dateCheck && monthCheck){
         any_players = true;
         const user_numbers = user.keno_numbers.split(",");
         let matches = await count_matches(winning_numbers, user_numbers);

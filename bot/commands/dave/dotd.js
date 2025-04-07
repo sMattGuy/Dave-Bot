@@ -114,6 +114,9 @@ module.exports = {
 				selection_array.push(fortune[sub_fortune]);
 				for(let i=-5;i<sub_fortune.rating;i++){
 					selection_array.push(sub_fortune);
+          if(i > 20){
+            break;
+          }
 				}
 			}
 			let selected_fortune = selection_array[Math.floor(Math.random()*selection_array.length)];

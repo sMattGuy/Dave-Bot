@@ -19,6 +19,7 @@ const reply_data_formatted = reply_data.split(regex);
 // db objects
 const Fortunes = require('../models/Fortunes.js')(sequelize, Sequelize.DataTypes);
 const Replies = require('../models/Replies.js')(sequelize, Sequelize.DataTypes);
+const Channels = require('../models/Channels.js')(sequelize, Sequelize.DataTypes);
 require('../models/Users.js')(sequelize, Sequelize.DataTypes);
 
 const force = process.argv.includes('--force') || process.argv.includes('-f');

@@ -1,4 +1,4 @@
-const { Users } = require('../DB/functions/dbObjects.js');
+const { Users, Channels } = require('../DB/functions/dbObjects.js');
 const { EmbedBuilder } = require('@discordjs/builders');
 
 async function process_keno(client){
@@ -114,8 +114,13 @@ async function process_keno(client){
         numbersEmbed.setFooter({text:footer_text});
       }
     }
-    const message_channel = await client.channels.fetch('119870239298027520').catch(() => {console.log('couldnt print winning numbers')})
-    message_channel.send({embeds: [numbersEmbed]});
+    const message_channels = await Channels.findAll();
+    for(let i=0;i<message_channels.length;i++){
+      const message_channel = await client.channels.fetch(message_channels[i].channel_id).catch(() => {console.log('couldnt print winning numbers')});
+      if(message_channel){
+        message_channel.send({embeds: [numbersEmbed]});
+      }
+    }
     for(let i=0;i<players.length;i++){
       let player = players[i];
       const user_dm = await client.users.fetch(player[0]).catch(() => null);

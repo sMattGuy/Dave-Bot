@@ -10,5 +10,6 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 const Users = require('../models/Users.js')(sequelize, Sequelize.DataTypes);
 const Fortunes = require('../models/Fortunes.js')(sequelize, Sequelize.DataTypes);
 const Replies = require('../models/Replies.js')(sequelize, Sequelize.DataTypes);
+const Channels = require('../models/Channels.js')(sequelize, Sequelize.DataTypes);
 
-module.exports = { Users, Fortunes, Replies };
+module.exports = { Users, Fortunes, Replies, Channels};

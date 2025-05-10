@@ -19,6 +19,9 @@ module.exports = {
         
         const id_regex = new RegExp("#\\d*")
         const hit_array = id_regex.exec(fortune)
+        if(!hit_array){
+          return;
+        }
         const id_number = parseInt(hit_array[0].slice(1));
 
         const fortune_found = await Fortunes.findOne({where:{id:id_number}});

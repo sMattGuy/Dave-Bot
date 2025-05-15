@@ -54,5 +54,5 @@ Dave bot can be interrupted by telling him to **shut up**, cancelling its action
 |Yap|Chance when another message is sent|Dave bot sends a random wikipedia summary.|
 |Respond|Chance when Dave is mentioned in chat|Dave bot will send a quick reply.|
 |Poem|Chance when another message is sent|Dave bot sends a random poem.|
-If a user reacts to another users message with the special DaveUpVote or DaveDownVote emote, the message author will get or lose karma.  
+If a user reacts to another users message with the special DaveUpVote or DaveDownVote command, which is accessed by right clicking a message, the message author will get or lose karma.  
 If the author of the message tries reacting to the message, they will lock the message out of gaining karma, and it can only lose karma.

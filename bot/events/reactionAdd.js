@@ -2,8 +2,8 @@ const { Events } = require('discord.js');
 const { EmbedBuilder } = require('@discordjs/builders');
 const { Users, Fortunes } = require('../DB/functions/dbObjects.js')
 
-const upvote_id = 1344451256449765399;
-const downvote_id = 1344451255325687908; 
+const upvote_id = 1372713287996674060;
+const downvote_id = 1372713300189774026; 
 
 module.exports = {
 	name: Events.MessageReactionAdd,
